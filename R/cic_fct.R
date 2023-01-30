@@ -78,6 +78,8 @@ ecic <- function(
   if (is.null(ivar)) stop("A non-NULL `ivar` argument is required.\n")
   if (is.null(yvar)) stop("A non-NULL `yvar` argument is required.\n")
   
+  if (save_to_disk == T & !dir.exists(paste0(getwd(), "/temp"))) dir.create(paste0(getwd(), "/temp"))
+  
   # setup tvar and gvar
   dat = subset(dat, get(gvar) %in% unique(dat[[tvar]])) # exclude never-treated units
 
@@ -324,11 +326,11 @@ ecic <- function(
     #---------------------------------------------------------------------------
     # save to disk (saver, but maybe slower)
     if (save_to_disk == T) {
-      saveRDS(myQuant, file = paste0(myFolder, "/myQuant", j, ".rds"))
-      saveRDS(name_runs, file = paste0(myFolder, "/name_runs", j, ".rds"))
+      saveRDS(myQuant, file = paste0(getwd(), "/", myFolder, "/myQuant", j, ".rds"))
+      saveRDS(name_runs, file = paste0(getwd(), "/", myFolder, "/name_runs", j, ".rds"))
       return(j)
     }
-    
+
     # just work in the RAM (output lost if crash and RAM may be too small)
     if (short_output == T & save_to_disk == F) {
       return(list(coefs = myQuant, name_runs = name_runs))
@@ -345,8 +347,8 @@ ecic <- function(
   if(save_to_disk == T){
     myRuns <- lapply(1:nReps, function(j){
       list(
-        coefs =  lapply(list.files( path = paste0(myFolder, "/"), pattern = paste0("myQuant", j, ".rds"), full.names = TRUE ), readRDS)[[1]],
-        name_runs =   lapply(list.files( path = paste0(myFolder, "/"), pattern = paste0("name_runs", j, ".rds"), full.names = TRUE ), readRDS)[[1]]
+        coefs =  lapply(list.files( path = paste0(getwd(), "/", myFolder, "/"), pattern = paste0("myQuant", j, ".rds"), full.names = TRUE ), readRDS)[[1]],
+        name_runs =   lapply(list.files( path = paste0(getwd(), "/", myFolder, "/"), pattern = paste0("name_runs", j, ".rds"), full.names = TRUE ), readRDS)[[1]]
       )})
   }
 

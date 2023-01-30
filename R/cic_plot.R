@@ -26,7 +26,7 @@ cic_plot <- function(object,
   periods_es = attributes(object)[["ecic_res"]][["periods_es"]]
   myProbs    = attributes(object)[["ecic_res"]][["myProbs"]]
   
-  perc = coefs = es = se = NULL
+  perc = coefs = se = NULL
   
   # Plot the average QTE ----
 
