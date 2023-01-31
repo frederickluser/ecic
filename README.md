@@ -1,14 +1,17 @@
 
-# Extended Changes-in-Changes (ecic)
+# ecic: Extended Changes-in-Changes
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
 cohorts as suggested in Athey and Imbens
 ([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x)).
-They show how to aggregate the estimates from many changes-in-changes models for every valid two-by-two 
-combination of treatment and control group. This package implements this approach, 
-calculating standard errors via bootstrap and plotting results for _quantile 
-treatment effects_ (QTEs). Coefficients can also be aggregated for each post-
-treatment period in an event-study-style fashion.
+Changes-in-changes is a generalization of the difference-in-differences approach, estimating
+a treatment effect for the entire distribution instead of averages.
+
+Athey and Imbens
+([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x))
+show how to extend the model to multiple periods and cohorts, analogously to a Two-Way Fixed-Effects model for averages.
+This package implements this, 
+calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.
 
 ## Installation
 
@@ -43,12 +46,12 @@ Then, the function `ecic` estimates the changes-changes-model:
 # Estimate the model
 mod =
   ecic(
-    yvar = lemp,          # dependent variable
-    gvar = first.treat,   # group indicator
-    tvar = year,          # time indicator
-    ivar = countyreal,    # unit ID
-    dat = dat,            # dataset
-    boot = "weighted",    # bootstrap proceduce ("no", "normal", or "weighted")
+    yvar  = lemp,         # dependent variable
+    gvar  = first.treat,  # group indicator
+    tvar  = year,         # time indicator
+    ivar  = countyreal,   # unit ID
+    dat   = dat,          # dataset
+    boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
     nReps = 20            # number of bootstrap runs
     )
 ```
@@ -81,18 +84,18 @@ cic_plot(mod_res)
 
 ## Event-Study Example
 The package also allows to report _event-study-style_ results of the effect.
-To do so, simply add the `es = T`argument to the estimation and `cic_summary`will report effects for every event period.
+To do so, simply add the `es = T` argument to the estimation and `cic_summary` will report effects for every event period.
 ``` r
 # Estimate the model
 mod =
   ecic(
-    yvar = lemp,          # dependent variable
-    gvar = first.treat,   # group indicator
-    tvar = year,          # time indicator
-    ivar = countyreal,    # unit ID
-    dat = dat,            # dataset
-    es = T,               # report an event study
-    boot = "weighted",    # bootstrap proceduce ("no", "normal", or "weighted")
+    yvar  = lemp,         # dependent variable
+    gvar  = first.treat,  # group indicator
+    tvar  = year,         # time indicator
+    ivar  = countyreal,   # unit ID
+    dat   = dat,          # dataset
+    es    = T,            # report an event study
+    boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
     nReps = 20            # number of bootstrap runs
     )
 
@@ -140,7 +143,7 @@ cic_plot(
   <img src=https://user-images.githubusercontent.com/57940466/215794787-495722c2-b363-49dc-a79c-2ad4a066406a.png>
 </p>
 
-Alternatively, `es_type = "for_quantiles"`generates one plot for every quantile of interest.
+Alternatively, `es_type = "for_quantiles"` generates one plot for every quantile of interest.
 ``` r
 cic_plot(
     mod_res, 
@@ -157,18 +160,16 @@ cic_plot(
 ## Under the hood
 ### Estimation
 For every treated cohort, we observe the distribution of the potential outcome $Y(1)$. 
-In the case with two groups / cohorts and two periods, Athey and Imbens ([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x))
+In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x))
 show how to construct the counterfactual $Y(0)$.
+This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group.
 
-This extends straightforward to the case with multiple cohorts and periods, where every not-yet-treated 
-cohort is a valid comparison group.
-
-Since we cannot simply average Quantile Treatment Effects, we have to store first the empirical CDF of $Y(1)$ and $Y(0)$ for every two-by-two case. Note that therefore, no QTE can be estimated for units treated in the first (no pre-period) and last period (no comparison cohort) and small groups (default `nMin = 40`) are skipped as we need more observations to estimate QTEs compared to an average effect.
+Since we cannot simply average Quantile Treatment Effects, we must first store the empirical CDF of $Y(1)$ and $Y(0)$ for every two-by-two case. Note that, therefore, we cannot estimate a QTE for units treated in the first (no pre-period) and last period (no comparison cohort) and have to skip small cohorts (default `nMin = 40`) as we need more observations to estimate QTEs compared to an average effect.
 
 ### Aggregation
-Next, all estimated CDFs have to be aggregated to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes.
-Technically, `ecic`generates a grid of size `no_imp = 1e5` and imputes all empirical CDFs.
+Next, I aggregate all estimated CDFs to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes.
+Technically, `ecic` generates a grid of size `no_imp = 1e5` and imputes all empirical CDFs.
 
 ### Bootstrap
-Standard errors are calculated by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y($) `nRep` times (default 100).
+I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 100`).
 This part can be parallelized by setting `nCores > 1`.
