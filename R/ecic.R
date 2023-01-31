@@ -31,27 +31,6 @@
 ##' @param myFolder Location of the temporary files.
 ##' @param nCores Number of cores used.
 ##' @return An `ecic` object.
-##' @examples 
-##' # Load some sample data
-##' data(dat, package = "ecic")
-##' 
-##' # Estimate a basic model
-##' mod_res =
-##'   cic_summary(
-##'   ecic(
-##'     yvar  = lemp,         # dependent variable
-##'     gvar  = first.treat,  # group indicator
-##'     tvar  = year,         # time indicator
-##'     ivar  = countyreal,   # unit ID
-##'     dat   = dat,          # dataset
-##'     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-##'     nReps = 20            # number of bootstrap runs
-##'   )
-##'   )
-##'   
-##' # Basic Plot
-##' cic_plot(mod_res)
-##' 
 ##' @importFrom stats aggregate quantile sd
 ##' @import future
 ##' @import furrr
