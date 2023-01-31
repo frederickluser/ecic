@@ -2,29 +2,23 @@
 % Please edit documentation in R/cic_plot.R
 \name{cic_plot}
 \alias{cic_plot}
-\title{Estimate a changes-in-changes model with multiple periods and cohorts}
+\title{Plot an extended changes-in-changes model}
 \usage{
 cic_plot(
   object,
+  es_type = c("no", "aggregated", "for_quantiles", "for_periods"),
+  perc_plot = NULL,
+  periods_plot = NULL,
   xlab = NULL,
-  ylab = "QTE",
+  ylab = "QTE \\n",
   ylim = NULL,
   size = 2,
-  es_type = c(NULL, "aggregated", "for_quantiles", "for_periods"),
-  perc_plot = seq(0.1, 0.9, 0.1),
+  zero_line = F,
   legend_title = "Percentiles"
 )
 }
 \arguments{
 \item{object}{An \code{ecic} object.}
-
-\item{xlab}{Alternative x-axis label.}
-
-\item{ylab}{Alternative y-axis label.}
-
-\item{ylim}{Define the y-axis limits.}
-
-\item{size}{Size of the point estimates.}
 
 \item{es_type}{If an event study was estimated with \code{ecic}, you can choose the
 styple of the ES plot. "aggregated" puts everything in one plot. "for_quantiles"
@@ -32,11 +26,23 @@ generates one plot for each percentile. "for_periods" generates one plot for eac
 
 \item{perc_plot}{Which percentiles to plot.}
 
+\item{periods_plot}{Which periods to plot.}
+
+\item{xlab}{Alternative x-axis label}
+
+\item{ylab}{Alternative y-axis label.}
+
+\item{ylim}{Define the y-axis limits.}
+
+\item{size}{Size of the point estimates.}
+
+\item{zero_line}{Add a horizontal line at zero.}
+
 \item{legend_title}{Change the title of the legend.}
 }
 \value{
 An \code{ggplot2} object.
 }
 \description{
-Estimate a changes-in-changes model with multiple periods and cohorts
+Plot an extended changes-in-changes model
 }

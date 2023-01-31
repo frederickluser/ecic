@@ -18,6 +18,7 @@ remotes::install_github("frederickluser/ecic")
 
 ## Example
 
+First, load some sample data.
 ``` r
 library(ecic)
 
@@ -30,7 +31,9 @@ head(dat)
 #> 819 2006       8001 5.896761 8.378161        2007     1
 #> 827 2007       8001 5.896761 8.487352        2007     1
 #> 937 2003       8019 2.232377 4.997212        2007     1
+```
 
+Then, the function **ecic** estimates the ecic model:
 # Estimate the model
 mod =
   ecic(
@@ -42,8 +45,8 @@ mod =
     boot = "weighted",	# bootstrap proceduce (NULL, "normal", or "weighted")
     nReps = 100		# number of bootstrap runs
     )
-
-cic_summary(mod)
+```
+mod_res = cic_summary(mod)
   perc        coefs         se
 #> 0.1  0.128731804 0.08624093
 #> 0.2  0.006087219 0.04316900
@@ -54,3 +57,9 @@ cic_summary(mod)
 #> 0.7 -0.143767555 0.21229327
 #> 0.8  0.245438750 0.20500564
 #> 0.9 -0.153745906 0.25230691
+```
+Finally, results can be plotted using **cic_plot**:
+``` r
+cic_plot(mod_res)
+```
+
