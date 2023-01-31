@@ -2,6 +2,7 @@
 ##'
 ##' @param object An `ecic` object.
 ##' @return An `ecic_res` object.
+##' 
 ##' @importFrom stats sd
 ##' @export
 cic_summary = function(object) {

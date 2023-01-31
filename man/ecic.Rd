@@ -80,3 +80,29 @@ An \code{ecic} object.
 \description{
 Calculate the changes-in-changes model in Athey and Imbens.
 }
+\examples{
+# Load some sample data
+data(dat, package = "ecic")
+
+# Estimate a basic model
+mod_res =
+  cic_summary(
+  ecic(
+    yvar  = lemp,         # dependent variable
+    gvar  = first.treat,  # group indicator
+    tvar  = year,         # time indicator
+    ivar  = countyreal,   # unit ID
+    dat   = dat,          # dataset
+    boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
+    nReps = 20            # number of bootstrap runs
+  )
+  )
+  
+# Basic Plot
+cic_plot(mod_res)
+
+}
+\references{
+Athey, Susan and Guido W. Imbens (2006). \cite{Identification and Inference in
+Nonlinear Difference-in-Differences Models}. \url{https://doi.org/10.1111/j.1468-0262.2006.00668.x}
+}

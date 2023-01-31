@@ -13,6 +13,8 @@
 ##' @param zero_line Add a horizontal line at zero.
 ##' @param legend_title Change the title of the legend.
 ##' @return An `ggplot2` object.
+##' 
+##' @importFrom stats sd
 ##' @export
 cic_plot <- function(object, 
                      es_type = c("no", "aggregated", "for_quantiles", "for_periods"),
@@ -90,7 +92,7 @@ cic_plot <- function(object,
     plot_ylab  = "QTE \n"
     plot_xlab  = "\n Period"
     plot_data  = subset(do.call(rbind, object), perc %in% perc_plot)
-    if(!is.null(perc_plot)) perc_plot = myProbs
+    if(is.null(perc_plot)) perc_plot = myProbs
     
     for (i in 1:length(perc_plot)){
       assign(paste0("es", i), 
@@ -102,7 +104,7 @@ cic_plot <- function(object,
                ggplot2::geom_line(linetype = "dotted", linewidth = 1.1, alpha = .8, color = "darkslateblue") +
                ggplot2::geom_point(size = 4, color = "darkslateblue") +
                ggplot2::theme_minimal() + 
-               ggplot2::coord_cartesian(ylim) +
+               ggplot2::coord_cartesian(ylim = ylim) +
                ggplot2::xlab(plot_xlab) + 
                ggplot2::ylab(plot_ylab) + 
                ggplot2::ggtitle(paste0(plot_title, perc_plot[i]*10))
@@ -110,7 +112,7 @@ cic_plot <- function(object,
       if (zero_line == T) assign(paste0("es", i), get(paste0("es", i)) + ggplot2::geom_hline(yintercept = 0, col = "grey60"))
     }
     
-    for (i in 1:length(myProbs)){
+    for (i in 1:length(perc_plot)){
       if (i == 1){
         p = get("es1")
       } else {
@@ -139,7 +141,7 @@ cic_plot <- function(object,
                ggplot2::geom_line(linetype = "dotted", linewidth = 1.1, alpha = .8, color = "darkslateblue") +
                ggplot2::geom_point(size = 4, color = "darkslateblue") +
                ggplot2::theme_minimal() + 
-               ggplot2::coord_cartesian(ylim) +
+               ggplot2::coord_cartesian(ylim = ylim) +
                ggplot2::xlab(plot_xlab) + 
                ggplot2::ylab(plot_ylab) + 
                ggplot2::ggtitle(paste0(plot_title, i))
