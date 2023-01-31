@@ -1,6 +1,6 @@
-##' @title Estimate a changes-in-changes model with multiple periods and cohorts
+##' Estimate a changes-in-changes model with multiple periods and cohorts
 ##'
-##' @description Calculate the changes-in-changes model in Athey and Imbens.
+##' Calculate the changes-in-changes model in Athey and Imbens.
 ##' 
 ##' @param yvar Dependent variable.
 ##' @param gvar Group variable. Can be either a string (e.g., "first_treated") 
@@ -31,11 +31,6 @@
 ##' @param myFolder Location of the temporary files.
 ##' @param nCores Number of cores used.
 ##' @return An `ecic` object.
-##' 
-##' @references 
-##' Athey, Susan and Guido W. Imbens (2006). \cite{Identification and Inference in 
-##' Nonlinear Difference-in-Differences Models}. <https://doi.org/10.1111/j.1468-0262.2006.00668.x>
-##' 
 ##' @examples 
 ##' # Load some sample data
 ##' data(dat, package = "ecic")
