@@ -1,11 +1,13 @@
-##' Estimate a changes-in-changes model with multiple periods and cohorts
-##'
+##' @title Summary for a changes-in-changes model with multiple periods and cohorts
+##' 
+##' @description Summarizes an `ecic` model by aggregating the bootstrap runs. 
+##' Works also in an event-study fashion.
+##'  
 ##' @param object An `ecic` object.
 ##' @return An `ecic_res` object.
-##' 
 ##' @importFrom stats sd
 ##' @export
-cic_summary = function(object) {
+summary_ecic = function(object) {
 
   if(class(object)[1] != "ecic") stop("`object` needs to be a valid ecic object.\n")
   

@@ -1,8 +1,11 @@
-##' Plot an extended changes-in-changes model
-##'
+##' @title Plot an extended changes-in-changes model
+##' 
+##' @description Plots the results of the `ecic` model, either along
+##' the percentiles or in an event-study fasion.
+##' 
 ##' @param object An `ecic` object.
 ##' @param es_type If an event study was estimated with `ecic`, you can choose the 
-##' styple of the ES plot. "aggregated" puts everything in one plot. "for_quantiles"
+##' style of the ES plot. "aggregated" puts everything in one plot. "for_quantiles"
 ##' generates one plot for each percentile. "for_periods" generates one plot for each period.
 ##' @param perc_plot Which percentiles to plot.
 ##' @param periods_plot Which periods to plot.
@@ -12,12 +15,11 @@
 ##' @param size Size of the point estimates.
 ##' @param zero_line Add a horizontal line at zero.
 ##' @param legend_title Change the title of the legend.
-##' @return An `ggplot2` object.
-##' 
+##' @return A `ggplot2` object.
 ##' @importFrom stats sd
 ##' @export
-cic_plot <- function(object, 
-                     es_type = c("no", "aggregated", "for_quantiles", "for_periods"),
+plot_ecic = function(object, 
+                     es_type = c("aggregated", "for_quantiles", "for_periods"),
                      perc_plot = NULL,
                      periods_plot = NULL,        
                      xlab = NULL, 
@@ -33,12 +35,12 @@ cic_plot <- function(object,
   myProbs    = attributes(object)[["ecic_res"]][["myProbs"]]
 
   perc = coefs = se = NULL
-  if (es_type == "no") es_type = NULL
+  if (es == F) es_type = NULL
   if (is.null(perc_plot)) perc_plot = myProbs
   
-  if (!is.logical(zero_line)) stop("`zero_line` must be logical.\n")
-  if (class(object)[1] != "ecic_res") stop("`object` must be a ecic_res object. Run cic_summary first.\n")
-  if (!is.null(es_type) & (periods_es == 0 | is.na(periods_es))) warning("There is only one period. Average QTEs are plotted.\n")
+  if (!is.logical(zero_line)) stop("`zero_line` must be logical.")
+  if (class(object)[1] != "ecic_res") stop("`object` must be a ecic_res object. Run cic_summary first.")
+  if (!is.null(es_type) & (periods_es == 0 | is.na(periods_es))) warning("There is only one period. Average QTEs are plotted.")
 
   # Plot the average QTE -------------------------------------------------------
   if (es == F) {
@@ -63,7 +65,7 @@ cic_plot <- function(object,
   # Plot an event study for ALL percentiles jointly ----------------------------
   } else if (es_type == "aggregated"){
     
-    if (is.null(xlab)) xlab <- "\n Months After Treatment"
+    if (is.null(xlab)) xlab = "\n Months After Treatment"
 
     myBoot_plot      = subset(do.call(rbind, object), perc %in% perc_plot)
     myBoot_plot$es   = as.factor(myBoot_plot$es)
@@ -114,12 +116,12 @@ cic_plot <- function(object,
     
     for (i in 1:length(perc_plot)){
       if (i == 1){
-        p = get("es1")
+        p = list(get("es1"))
       } else {
-        p = p + get(paste0("es", i))
+        p[[length(p)+1]] = get(paste0("es", i))
       }
     }
-    p
+    patchwork::wrap_plots(p)
     
     # plot every period individually ----
   } else if (es_type == "for_periods"){
@@ -151,12 +153,12 @@ cic_plot <- function(object,
     
     for (i in myPeriods){
       if (i == 0){
-        p = get("es0")
+        p = list(get("es0"))
       } else {
-        p = p + get(paste0("es", i))
+        p[[length(p)+1]] = get(paste0("es", i))
       }
     }
-    p
+    patchwork::wrap_plots(p)
   }
 }
 

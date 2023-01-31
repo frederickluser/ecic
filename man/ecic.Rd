@@ -46,16 +46,15 @@ expression (e.g., country).}
 \item{nMin}{Minimum observations per groups. Small groups are deleted.}
 
 \item{boot}{Bootstrap. Resampling is done over the entire data set ("normal"),
-but might be weighted by period-cohort size ("weighted"). If \code{family} is NULL,
-no standard errors are reported.}
+but might be weighted by period-cohort size ("weighted").}
 
 \item{nReps}{Number of bootstrap replications.}
 
 \item{weight_n0}{Weight for the aggregation of the CDFs in the control group.
-n1 uses cohort sizes (Alternative: n0).}
+\code{n1} uses cohort sizes (Alternative: \code{n0}).}
 
 \item{weight_n1}{Weight for the aggregation of the CDFs in the treatment group.
-n1 uses cohort sizes (Alternative: n0).}
+\code{n1} uses cohort sizes (Alternative: \code{n0}).}
 
 \item{quant_algo}{Quantile algorithm (see Wikipedia for definitions).}
 
@@ -78,7 +77,7 @@ RAM needed.}
 An \code{ecic} object.
 }
 \description{
-Calculate the changes-in-changes model in Athey and Imbens.
+Calculates a CIC model as in Athey and Imbens (2006) for multiple periods and cohorts.
 }
 \examples{
 # Load some sample data
@@ -86,7 +85,7 @@ data(dat, package = "ecic")
 
 # Estimate a basic model
 mod_res =
-  cic_summary(
+  summary_ecic(
   ecic(
     yvar  = lemp,         # dependent variable
     gvar  = first.treat,  # group indicator
@@ -99,10 +98,10 @@ mod_res =
   )
   
 # Basic Plot
-cic_plot(mod_res)
-
+plot_ecic(mod_res)
 }
 \references{
 Athey, Susan and Guido W. Imbens (2006). \cite{Identification and Inference in
-Nonlinear Difference-in-Differences Models}. \url{https://doi.org/10.1111/j.1468-0262.2006.00668.x}
+Nonlinear Difference-in-Differences Models}.
+\doi{10.1111/j.1468-0262.2006.00668.x}
 }

@@ -1,6 +1,6 @@
-##' Estimate a changes-in-changes model with multiple periods and cohorts
-##'
-##' Calculate the changes-in-changes model in Athey and Imbens.
+##' @title Estimate a changes-in-changes model with multiple periods and cohorts
+##' 
+##' @description Calculates a CIC model as in Athey and Imbens (2006) for multiple periods and cohorts.
 ##' 
 ##' @param yvar Dependent variable.
 ##' @param gvar Group variable. Can be either a string (e.g., "first_treated") 
@@ -14,13 +14,12 @@
 ##' @param myProbs Quantiles that the quantile treatment effects should be calculated for.
 ##' @param nMin Minimum observations per groups. Small groups are deleted.
 ##' @param boot Bootstrap. Resampling is done over the entire data set ("normal"), 
-##' but might be weighted by period-cohort size ("weighted"). If `family` is NULL,
-##' no standard errors are reported.
+##' but might be weighted by period-cohort size ("weighted"). 
 ##' @param nReps Number of bootstrap replications.
 ##' @param weight_n0 Weight for the aggregation of the CDFs in the control group. 
-##'  n1 uses cohort sizes (Alternative: n0).
+##'  `n1` uses cohort sizes (Alternative: `n0`).
 ##' @param weight_n1 Weight for the aggregation of the CDFs in the treatment group. 
-##' n1 uses cohort sizes (Alternative: n0).
+##' `n1` uses cohort sizes (Alternative: `n0`).
 ##' @param quant_algo Quantile algorithm (see Wikipedia for definitions).
 ##' @param no_imp Grid size for the imputation of the empirical CDF.
 ##' @param es Event Study (Logical). If TRUE, a QTE is estimated for each period.
@@ -31,11 +30,34 @@
 ##' @param myFolder Location of the temporary files.
 ##' @param nCores Number of cores used.
 ##' @return An `ecic` object.
+##' @references 
+##' Athey, Susan and Guido W. Imbens (2006). \cite{Identification and Inference in 
+##' Nonlinear Difference-in-Differences Models}. 
+##' \doi{10.1111/j.1468-0262.2006.00668.x}
+##' @examples 
+##' # Load some sample data
+##' data(dat, package = "ecic")
+##' 
+##' # Estimate a basic model
+##' mod_res =
+##'   summary_ecic(
+##'   ecic(
+##'     yvar  = lemp,         # dependent variable
+##'     gvar  = first.treat,  # group indicator
+##'     tvar  = year,         # time indicator
+##'     ivar  = countyreal,   # unit ID
+##'     dat   = dat,          # dataset
+##'     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
+##'     nReps = 20            # number of bootstrap runs
+##'   )
+##'   )
+##'   
+##' # Basic Plot
+##' plot_ecic(mod_res)
 ##' @importFrom stats aggregate quantile sd
 ##' @import future
 ##' @import furrr
 ##' @export
-##' 
 ecic = function(
                 yvar = NULL, 
                 gvar = NULL, 
@@ -65,7 +87,7 @@ ecic = function(
   weight_n1 = match.arg(weight_n1)
   treat     = NULL
   
-  if (is.null(dat)) stop("A non-NULL `dat` argument is required.\n")
+  if (is.null(dat)) stop("A non-NULL `dat` argument is required.")
   
   # Clean Inputs
   nl = as.list(seq_along(dat))
@@ -80,21 +102,21 @@ ecic = function(
   if (is.numeric(ivar)) ivar = names(dat)[ivar]
   
   # Check inputs
-  if (is.null(gvar))   stop("A non-NULL `gvar` argument is required.\n")
-  if (is.null(tvar))   stop("A non-NULL `tvar` argument is required.\n")
-  if (is.null(ivar))   stop("A non-NULL `ivar` argument is required.\n")
-  if (is.null(yvar))   stop("A non-NULL `yvar` argument is required.\n")
-  if (!is.logical(es)) stop("`es` must be logical.\n")
-  if (!is.logical(short_output)) stop("`short_output` must be logical.\n")
-  if (!is.logical(save_to_disk)) stop("`save_to_disk` must be logical.\n")
-  if (!quant_algo %in% 1:9)      stop("Invalid quantile algorithm.\n")
+  if (is.null(gvar))   stop("A non-NULL `gvar` argument is required.")
+  if (is.null(tvar))   stop("A non-NULL `tvar` argument is required.")
+  if (is.null(ivar))   stop("A non-NULL `ivar` argument is required.")
+  if (is.null(yvar))   stop("A non-NULL `yvar` argument is required.")
+  if (!is.logical(es)) stop("`es` must be logical.")
+  if (!is.logical(short_output)) stop("`short_output` must be logical.")
+  if (!is.logical(save_to_disk)) stop("`save_to_disk` must be logical.")
+  if (!quant_algo %in% 1:9)      stop("Invalid quantile algorithm.")
   
   # Check bootstrap
   if (boot == "no") boot = NULL
   nReps = as.integer(nReps)
-  if (! nReps > 0) stop("nReps must be a positive integer.\n")
+  if (! nReps > 0) stop("nReps must be a positive integer.")
   if (is.null(boot) & nReps != 1){
-    warning("nReps > 1 but bootstrap is deactivated. nReps is set to 1.\n")
+    warning("nReps > 1 but bootstrap is deactivated. nReps is set to 1.")
     nReps = 1
   }
   
@@ -115,14 +137,18 @@ ecic = function(
   
   qte_cohort   = list_cohorts[-length(list_cohorts)] # omit last g (no comparison group)
   qte_cohort   = qte_cohort[qte_cohort != 1] # omit first g (no pre-period)
+  if(length(qte_cohort) == 0) stop("Not enough cohorts / groups in the data set!")
   
-  if(length(qte_cohort) == 0) stop("Not enough cohorts / groups in the data set!\n")
-    
+  # max event time QTEs can be calculated for
+  periods_es = length(
+    list_periods[which(list_periods == qte_cohort[1]):(length(list_periods)-1)]
+    ) - 1
+  
   # Print settings
   if(is.null(boot)){
-    print(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations. No standard errors computed.\n"))
+    print(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations. No standard errors computed."))
   } else {
-    print(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations with ", nReps, " (", boot, ") bootstrap replication(s).\n"))
+    print(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations with ", nReps, " (", boot, ") bootstrap replications."))
   }
   
   # calculate group sizes
@@ -131,8 +157,8 @@ ecic = function(
   
   # check number of too small groups
   diffGroup = sum(group_sizes$N <= nMin)
-  if (diffGroup != 0) warning(paste0("You have ", diffGroup, " (", round(100 * diffGroup / nrow(group_sizes)), "%) too small groups (less than ", nMin, " observations). They will be dropped.\n"))
-  if (diffGroup == nrow(group_sizes)) stop("All treated cohorts are too small (you can adjust `nMin` with caution).\n")
+  if (diffGroup != 0) warning(paste0("You have ", diffGroup, " (", round(100 * diffGroup / nrow(group_sizes)), "%) too small groups (less than ", nMin, " observations). They will be dropped."))
+  if (diffGroup == nrow(group_sizes)) stop("All treated cohorts are too small (you can adjust `nMin` with caution).")
   
   ################################################################################
   # Calculate all 2-by-2 CIC combinations
@@ -175,7 +201,7 @@ ecic = function(
       for (preCohort in pre_cohort) {
       
         # 3) post-treatment periods ----
-        qte_year = list_periods[which(list_periods == qteCohort):(which(list_periods == last_cohort)-1)]
+        qte_year = list_periods[which(list_periods == qteCohort):(which(list_periods == last_cohort))]
         qte_year = qte_year[qte_year < preCohort] # control has to be untreated
         
         # for event study: only calculate periods you're interested in

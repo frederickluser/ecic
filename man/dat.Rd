@@ -7,7 +7,7 @@
 \format{
 \subsection{\code{dat}}{
 
-A data frame with 7,240 rows and 60 columns:
+A simulated data frame with 60,000 rows and 5 columns:
 \describe{
 \item{countyreal}{Unit ID}
 \item{first.treat}{Cohort}
@@ -25,7 +25,7 @@ Simulation data
 dat
 }
 \description{
-A simulated sample panel data with heterogenous treatment effects between
+A simulated sample panel data with heterogenous treatment effects across
 cohorts and groups.
 }
 \keyword{datasets}
