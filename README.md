@@ -1,65 +1,174 @@
 
 # Extended Changes-in-Changes (ecic)
 
-**ecic** estimates a changes-in-changes model with multiple periods and cohorts as suggested in Athey and Imbens
-([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x).
-They propose to estimate a changes-in-changes model for every valid two-by-two combination of treatment and control groups.
-This package implements this, calculates standard errors via bootstrap and plot results for average quantile treatment effects (QTEs).
-Coefficients can also be aggregated for each post-treatment period in an event-study-style fashion.
+`ecic` estimates a changes-in-changes model with multiple periods and 
+cohorts as suggested in Athey and Imbens
+([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x)).
+They show how to aggregate the estimates from many changes-in-changes models for every valid two-by-two 
+combination of treatment and control group. This package implements this approach, 
+calculating standard errors via bootstrap and plotting results for _quantile 
+treatment effects_ (QTEs). Coefficients can also be aggregated for each post-
+treatment period in an event-study-style fashion.
 
 ## Installation
 
-You can install **ecic** from Github.
+You can install `ecic` from Github.
 
 ``` r
 # install.packages("remotes")
 remotes::install_github("frederickluser/ecic")
 ```
 
-## Example
-
-First, load some sample data.
+## Basic Example
+### Estimation
+Let's look at a short example how to use the package. First, load some simulated sample data.
 ``` r
 library(ecic)
+data(dat, package = "ecic")
 
-data("dat", package = "ecic")
 head(dat)
-#>    year countyreal     lpop     lemp first.treat treat
-#> 866 2003       8001 5.896761 8.461469        2007     1
-#> 841 2004       8001 5.896761 8.336870        2007     1
-#> 842 2005       8001 5.896761 8.340217        2007     1
-#> 819 2006       8001 5.896761 8.378161        2007     1
-#> 827 2007       8001 5.896761 8.487352        2007     1
-#> 937 2003       8019 2.232377 4.997212        2007     1
+#>  countyreal  first.treat   year time_to_treat   lemp
+#>       <int>        <int>  <int>         <int>  <dbl>
+#>           3        1980    1980             0   2.21
+#>           3        1980    1981             1   3.33
+#>           3        1980    1982             2   3.67
+#>           5        1980    1980             0   2.77
+#>           5        1980    1981             1   3.88
+#>           5        1980    1982             2   3.80
 ```
 
-Then, the function **ecic** estimates the ecic model:
+
+Then, the function `ecic` estimates the changes-changes-model:
+``` r
 # Estimate the model
 mod =
   ecic(
-    yvar = lemp, 		# dependent variable
-    gvar = first.treat, # group variable
-    tvar = year,		# time variable
-    ivar = countyreal,	# unit ID
-    dat = mpdta, 		# dataset
-    boot = "weighted",	# bootstrap proceduce (NULL, "normal", or "weighted")
-    nReps = 100		# number of bootstrap runs
+    yvar = lemp,          # dependent variable
+    gvar = first.treat,   # group indicator
+    tvar = year,          # time indicator
+    ivar = countyreal,    # unit ID
+    dat = dat,            # dataset
+    boot = "weighted",    # bootstrap proceduce ("no", "normal", or "weighted")
+    nReps = 20            # number of bootstrap runs
     )
 ```
-mod_res = cic_summary(mod)
-  perc        coefs         se
-#> 0.1  0.128731804 0.08624093
-#> 0.2  0.006087219 0.04316900
-#> 0.3 -0.063364510 0.26915492
-#> 0.4 -0.087365098 0.27766957
-#> 0.5 -0.121044019 0.32612111
-#> 0.6 -0.079813481 0.29355815
-#> 0.7 -0.143767555 0.21229327
-#> 0.8  0.245438750 0.20500564
-#> 0.9 -0.153745906 0.25230691
+`mod`contains for every bootstrap run a list of all 2-by-2 combinations (`$name_runs`) and the point-estimates.
+`cic_summary` combines this and adds standard errors:
+
+``` r
+(mod_res = cic_summary(mod) )
+
+#> perc     coefs         se
+#>  0.1 0.9073873 0.02286149
+#>  0.2 0.9792253 0.02027064
+#>  0.3 1.0648871 0.01912238
+#>  0.4 1.1891874 0.01744996
+#>  0.5 1.3155999 0.02326969
+#>  0.6 1.4437203 0.02334389
+#>  0.7 1.5922397 0.02342538
+#>  0.8 1.7792516 0.01728373
+#>  0.9 2.1140103 0.02014776
 ```
-Finally, results can be plotted using **cic_plot**:
+
+### Plotting
+Finally, results can be plotted using `cic_plot`.
 ``` r
 cic_plot(mod_res)
 ```
+<p align="center"> 
+  <img src=https://user-images.githubusercontent.com/57940466/215788814-0f4fc887-a265-4412-aded-d935c3a9c182.png>
+</p>
 
+## Event-Study Example
+The package also allows to report _event-study-style_ results of the effect.
+To do so, simply add the `es = T`argument to the estimation and `cic_summary`will report effects for every event period.
+``` r
+# Estimate the model
+mod =
+  ecic(
+    yvar = lemp,          # dependent variable
+    gvar = first.treat,   # group indicator
+    tvar = year,          # time indicator
+    ivar = countyreal,    # unit ID
+    dat = dat,            # dataset
+    es = T,               # report an event study
+    boot = "weighted",    # bootstrap proceduce ("no", "normal", or "weighted")
+    nReps = 20            # number of bootstrap runs
+    )
+
+# report results for every event period
+(mod_res = cic_summary(mod) )
+
+
+#> [[1]]
+#> perc es     coefs          se
+#>  0.1  0 0.9082170 0.042402882
+#>  0.2  0 0.9477988 0.009436464
+#>  0.3  0 0.9694125 0.013942156
+#>  0.4  0 1.0245454 0.019189802
+#>  0.5  0 1.0777637 0.011401043
+#>  0.6  0 1.1171074 0.005535331
+#>  0.7  0 1.1652509 0.008632115
+#>  0.8  0 1.2195577 0.014800394
+#>  0.9  0 1.3256676 0.015221564
+
+#> [[2]]
+#> perc es    coefs          se
+#>  0.1  1 2.270552 0.014901316
+#>  0.2  1 2.225630 0.004805656
+#>  0.3  1 2.219548 0.018903208
+#>  0.4  1 2.254401 0.019642641
+#>  0.5  1 2.279502 0.011910761
+#>  0.6  1 2.285906 0.015449291
+#>  0.7  1 2.305432 0.014775212
+#>  0.8  1 2.346030 0.004632288
+#>  0.9  1 2.408531 0.029807759
+
+#> [...]
+```
+### Plotting
+Event-study results can be plotted for every period individually with the option `es_type = "for_periods"`.
+``` r
+cic_plot(
+    mod_res, 
+    periods_plot = c(0, 2),   # which periods you want to show
+    es_type = "for_periods",  # plots by period
+    ylim = c(.5, 4)           # same y-axis
+    )
+```
+<p align="center"> 
+  <img src=https://user-images.githubusercontent.com/57940466/215794787-495722c2-b363-49dc-a79c-2ad4a066406a.png>
+</p>
+
+Alternatively, `es_type = "for_quantiles"`generates one plot for every quantile of interest.
+``` r
+cic_plot(
+    mod_res, 
+    periods_plot = c(.1, .5, .9), # which quantiles you want to show
+    es_type = "for_quantiles",    # plots by period
+    ylim = c(0, 4),               # same y-axis
+    zero_line = T                 # add a horizontal line at y = 0
+    )
+```
+<p align="center"> 
+  <img src=https://user-images.githubusercontent.com/57940466/215793961-a01ba80b-8c54-4c33-a070-dc68ba8f2203.png>
+</p>
+
+## Under the hood
+### Estimation
+For every treated cohort, we observe the distribution of the potential outcome $Y(1)$. 
+In the case with two groups / cohorts and two periods, Athey and Imbens ([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x))
+show how to construct the counterfactual $Y(0)$.
+
+This extends straightforward to the case with multiple cohorts and periods, where every not-yet-treated 
+cohort is a valid comparison group.
+
+Since we cannot simply average Quantile Treatment Effects, we have to store first the empirical CDF of $Y(1)$ and $Y(0)$ for every two-by-two case. Note that therefore, no QTE can be estimated for units treated in the first (no pre-period) and last period (no comparison cohort) and small groups (default `nMin = 40`) are skipped as we need more observations to estimate QTEs compared to an average effect.
+
+### Aggregation
+Next, all estimated CDFs have to be aggregated to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes.
+Technically, `ecic`generates a grid of size `no_imp = 1e5` and imputes all empirical CDFs.
+
+### Bootstrap
+Standard errors are calculated by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y($) `nRep` times (default 100).
+This part can be parallelized by setting `nCores > 1`.
