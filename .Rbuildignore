@@ -5,3 +5,4 @@
 ^pkgdown$
 ^cran-comments\.md$
 ^revdep$
+^CRAN-SUBMISSION$
