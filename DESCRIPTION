@@ -2,29 +2,27 @@ Package: ecic
 Title: Extended Changes-in-Changes
 Version: 0.0.0.9000
 Authors@R: 
-    person( given = "Frederic",
-            family = "Kluser",
-           role = c("aut", "cre"),
-            email = "frederic.kluser@unibe.ch",
-            comment = c(ORCID = "0000-0002-4454-7572")
-    )
-Description: Functions for implementing extended changes-in-changes models a la Susan Athey and Guido Imbens (2006) with multiple cohorts and time periods. Computes quantile treatment effects for all possible two-by-two combinations (by aggregating the CDFs and inverting the quantile functions). Then summarizes or plots the treatment effects. 
+    person("Frederic", "Kluser", , "frederic.kluser@unibe.ch", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-4454-7572"))
+Description: Functions for implementing extended changes-in-changes models
+    a la Susan Athey and Guido Imbens (2006) with multiple cohorts and
+    time periods. Computes quantile treatment effects for all possible
+    two-by-two combinations (by aggregating the CDFs and inverting the
+    quantile functions). Then summarizes or plots the treatment effects.
 License: MIT + file LICENSE
-Imports: 
-    stats,
-    furrr,
-    ggplot2,
-    patchwork,
-    future
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.3
-URL: https://frederickluser.github.io/,
-    https://frederickluser.github.io/ecic/
+URL: https://frederickluser.github.io/ecic/
 BugReports: https://github.com/frederickluser/ecic/issues
 Depends: 
     R (>= 2.10)
-LazyData: true
+Imports: 
+    furrr,
+    future,
+    ggplot2,
+    patchwork,
+    stats
 Suggests: 
-    covr,
     tinytest
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

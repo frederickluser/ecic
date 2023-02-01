@@ -80,6 +80,7 @@ An \code{ecic} object.
 Calculates a CIC model as in Athey and Imbens (2006) for multiple periods and cohorts.
 }
 \examples{
+\donttest{
 # Load some sample data
 data(dat, package = "ecic")
 
@@ -99,6 +100,7 @@ mod_res =
   
 # Basic Plot
 plot_ecic(mod_res)
+}
 }
 \references{
 Athey, Susan and Guido W. Imbens (2006). \cite{Identification and Inference in

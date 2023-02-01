@@ -35,6 +35,7 @@
 ##' Nonlinear Difference-in-Differences Models}. 
 ##' \doi{10.1111/j.1468-0262.2006.00668.x}
 ##' @examples 
+##' \donttest{
 ##' # Load some sample data
 ##' data(dat, package = "ecic")
 ##' 
@@ -54,6 +55,7 @@
 ##'   
 ##' # Basic Plot
 ##' plot_ecic(mod_res)
+##' }
 ##' @importFrom stats aggregate quantile sd
 ##' @import future
 ##' @import furrr
