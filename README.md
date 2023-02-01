@@ -84,9 +84,8 @@ Finally, results can be plotted using `cic_plot`.
 ``` r
 cic_plot(mod_res)
 ```
-<p align="center"> 
-  <img src=https://user-images.githubusercontent.com/57940466/215788814-0f4fc887-a265-4412-aded-d935c3a9c182.png>
-</p>
+ <img src="man/figures/README-unnamed-chunk-12-1.png" width="90%" style="display: block; margin: auto;" />
+
 
 ## Event-Study Example
 The package also allows to report _event-study-style_ results of the effect.
