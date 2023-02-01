@@ -84,8 +84,9 @@ Finally, results can be plotted using `cic_plot`.
 ``` r
 cic_plot(mod_res)
 ```
- <img src="man/images/plot_avg.png" width="90%" style="display: block; margin: auto;" />
-
+<p align="center"> 
+ <img src="man/images/plot_avg.png" width="75%" style="display: block; margin: auto;" />
+</p>
 
 ## Event-Study Example
 The package also allows to report _event-study-style_ results of the effect.
@@ -144,8 +145,9 @@ cic_plot(
     ylim = c(.5, 4)           # same y-axis
     )
 ```
+
 <p align="center"> 
-  <img src=https://user-images.githubusercontent.com/57940466/215794787-495722c2-b363-49dc-a79c-2ad4a066406a.png>
+ <img src="man/images/plot_es_period.png" width="75%" style="display: block; margin: auto;" />
 </p>
 
 Alternatively, `es_type = "for_quantiles"` generates one plot for every quantile of interest.
@@ -159,7 +161,7 @@ cic_plot(
     )
 ```
 <p align="center"> 
-  <img src=https://user-images.githubusercontent.com/57940466/215793961-a01ba80b-8c54-4c33-a070-dc68ba8f2203.png>
+ <img src="man/images/plot_es_decile.png" width="75%" style="display: block; margin: auto;" />
 </p>
 
 ## Under the hood
