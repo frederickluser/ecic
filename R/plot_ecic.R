@@ -1,7 +1,7 @@
 ##' @title Plot an extended changes-in-changes model
 ##' 
 ##' @description Plots the results of the `ecic` model, either along
-##' the percentiles or in an event-study fasion.
+##' the percentiles or in an event-study fashion.
 ##' 
 ##' @param object An `ecic` object.
 ##' @param es_type If an event study was estimated with `ecic`, you can choose the 

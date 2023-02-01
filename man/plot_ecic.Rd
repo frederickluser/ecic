@@ -45,5 +45,5 @@ A \code{ggplot2} object.
 }
 \description{
 Plots the results of the \code{ecic} model, either along
-the percentiles or in an event-study fasion.
+the percentiles or in an event-study fashion.
 }

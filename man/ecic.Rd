@@ -77,7 +77,7 @@ RAM needed.}
 An \code{ecic} object.
 }
 \description{
-Calculates a CIC model as in Athey and Imbens (2006) for multiple periods and cohorts.
+Calculates a changes-in-changes model as in Athey and Imbens (2006) for multiple periods and cohorts.
 }
 \examples{
 \donttest{

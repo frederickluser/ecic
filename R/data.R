@@ -14,4 +14,5 @@
 #'   ...
 #' }
 #' @source Simulation data
+#' @noRd
 "dat"

@@ -86,7 +86,7 @@ Finally, results can be plotted using `plot_ecic`.
 plot_ecic(mod_res)
 ```
 <p align="center"> 
- <img src="man/images/plot_avg.png" width="75%" style="display: block; margin: auto;" />
+ <img src="man/figures/plot_avg.png" width="75%" style="display: block; margin: auto;" />
 </p>
 
 ## Event-Study Example
@@ -148,7 +148,7 @@ plot_ecic(
 ```
 
 <p align="center"> 
- <img src="man/images/plot_es_period.png" width="75%" style="display: block; margin: auto;" />
+ <img src="man/figures/plot_es_period.png" width="75%" style="display: block; margin: auto;" />
 </p>
 
 Alternatively, `es_type = "for_quantiles"` generates one plot for every quantile of interest.
@@ -161,7 +161,7 @@ plot_ecic(
     )
 ```
 <p align="center"> 
- <img src="man/images/plot_es_decile.png" width="75%" style="display: block; margin: auto;" />
+ <img src="man/figures/plot_es_decile.png" width="75%" style="display: block; margin: auto;" />
 </p>
 
 ## Under the hood
