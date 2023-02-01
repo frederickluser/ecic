@@ -1,6 +1,6 @@
 #' Simulated sample data
 #'
-#' A simulated sample panel data with heterogenous treatment effects across 
+#' A simulated sample panel data with heterogeneous treatment effects across 
 #' cohorts and groups. 
 #'
 #' @format ## `dat`

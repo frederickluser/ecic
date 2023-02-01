@@ -1,6 +1,6 @@
 ##' @title Estimate a changes-in-changes model with multiple periods and cohorts
 ##' 
-##' @description Calculates a CIC model as in Athey and Imbens (2006) for multiple periods and cohorts.
+##' @description Calculates a changes-in-changes model as in Athey and Imbens (2006) for multiple periods and cohorts.
 ##' 
 ##' @param yvar Dependent variable.
 ##' @param gvar Group variable. Can be either a string (e.g., "first_treated") 
