@@ -6,9 +6,7 @@
  [![Codecov test coverage](https://codecov.io/gh/frederickluser/ecic/branch/main/graph/badge.svg)](https://app.codecov.io/gh/frederickluser/ecic?branch=main)
  <!-- badges: end -->
 
-`e
-
-` estimates a changes-in-changes model with multiple periods and 
+`ecic` estimates a changes-in-changes model with multiple periods and 
 cohorts as suggested in Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
 Changes-in-changes is a generalization of the difference-in-differences approach, estimating
 a treatment effect for the entire distribution instead of averages.
@@ -86,7 +84,7 @@ Finally, results can be plotted using `plot_ecic`.
 plot_ecic(mod_res)
 ```
 <p align="center"> 
- <img src="man/figures/plot_avg.png" width="75%" style="display: block; margin: auto;" />
+ <img src="man/figures/plot_avg.png" width="100%" style="display: block; margin: auto;" />
 </p>
 
 ## Event-Study Example
@@ -148,7 +146,7 @@ plot_ecic(
 ```
 
 <p align="center"> 
- <img src="man/figures/plot_es_period.png" width="75%" style="display: block; margin: auto;" />
+ <img src="man/figures/plot_es_period.png" width="100%" style="display: block; margin: auto;" />
 </p>
 
 Alternatively, `es_type = "for_quantiles"` generates one plot for every quantile of interest.
@@ -161,7 +159,7 @@ plot_ecic(
     )
 ```
 <p align="center"> 
- <img src="man/figures/plot_es_decile.png" width="75%" style="display: block; margin: auto;" />
+ <img src="man/figures/plot_es_decile.png" width="100%" style="display: block; margin: auto;" />
 </p>
 
 ## Under the hood
