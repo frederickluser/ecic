@@ -84,7 +84,7 @@ Finally, results can be plotted using `cic_plot`.
 ``` r
 cic_plot(mod_res)
 ```
- <img src="man/figures/README-unnamed-chunk-12-1.png" width="90%" style="display: block; margin: auto;" />
+ <img src="man/images/plot_avg.png" width="90%" style="display: block; margin: auto;" />
 
 
 ## Event-Study Example
