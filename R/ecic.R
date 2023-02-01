@@ -22,7 +22,7 @@
 ##' `n1` uses cohort sizes (Alternative: `n0`).
 ##' @param quant_algo Quantile algorithm (see Wikipedia for definitions).
 ##' @param no_imp Grid size for the imputation of the empirical CDF.
-##' @param es Event Study (Logical). If TRUE, a QTE is estimated for each period.
+##' @param es Event Study (Logical). If TRUE, a quantile treatment effect is estimated for each period.
 ##' @param periods_es Periods of the event study.
 ##' @param short_output Only reports essential results.
 ##' @param save_to_disk Logical. If TRUE, results are temporarily saved, reduces the
