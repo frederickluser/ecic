@@ -1,6 +1,12 @@
 
 # ecic: Extended Changes-in-Changes
 
+ <!-- badges: start -->
+   [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
+ [![Codecov test coverage](https://codecov.io/gh/frederickluser/ecic/branch/main/graph/badge.svg)](https://app.codecov.io/gh/frederickluser/ecic?branch=main)
+
+ <!-- badges: end -->
+
 `ecic` estimates a changes-in-changes model with multiple periods and 
 cohorts as suggested in Athey and Imbens
 ([2006](https://onlinelibrary.wiley.com/doi/10.1111/j.1468-0262.2006.00668.x)).
