@@ -4,7 +4,6 @@
  <!-- badges: start -->
    [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
  [![Codecov test coverage](https://codecov.io/gh/frederickluser/ecic/branch/main/graph/badge.svg)](https://app.codecov.io/gh/frederickluser/ecic?branch=main)
-
  <!-- badges: end -->
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
@@ -58,31 +57,32 @@ mod =
     ivar  = countyreal,   # unit ID
     dat   = dat,          # dataset
     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 20            # number of bootstrap runs
+    nReps = 10            # number of bootstrap runs
     )
 ```
 `mod`contains for every bootstrap run a list of all 2-by-2 combinations (`$name_runs`) and the point-estimates.
-`cic_summary` combines this and adds standard errors:
+`summary_ecic` combines this and adds standard errors:
 
 ``` r
-(mod_res = cic_summary(mod) )
+(mod_res = summary_ecic(mod) )
 
-#> perc     coefs         se
-#>  0.1 0.9073873 0.02286149
-#>  0.2 0.9792253 0.02027064
-#>  0.3 1.0648871 0.01912238
-#>  0.4 1.1891874 0.01744996
-#>  0.5 1.3155999 0.02326969
-#>  0.6 1.4437203 0.02334389
-#>  0.7 1.5922397 0.02342538
-#>  0.8 1.7792516 0.01728373
-#>  0.9 2.1140103 0.02014776
+#> perc    coefs         se
+#>  0.1 1.215531 0.02670761
+#>  0.2 1.324130 0.02310521
+#>  0.3 1.458270 0.02105119
+#>  0.4 1.590848 0.02128534
+#>  0.5 1.747296 0.02098057
+#>  0.6 1.921818 0.02135982
+#>  0.7 2.124138 0.01802972
+#>  0.8 2.372483 0.01799869
+#>  0.9 2.787395 0.02241811
+
 ```
 
 ### Plotting
-Finally, results can be plotted using `cic_plot`.
+Finally, results can be plotted using `plot_ecic`.
 ``` r
-cic_plot(mod_res)
+plot_ecic(mod_res)
 ```
 <p align="center"> 
  <img src="man/images/plot_avg.png" width="75%" style="display: block; margin: auto;" />
@@ -90,7 +90,7 @@ cic_plot(mod_res)
 
 ## Event-Study Example
 The package also allows to report _event-study-style_ results of the effect.
-To do so, simply add the `es = T` argument to the estimation and `cic_summary` will report effects for every event period.
+To do so, simply add the `es = T` argument to the estimation and `summary_ecic` will report effects for every event period.
 ``` r
 # Estimate the model
 mod =
@@ -102,43 +102,43 @@ mod =
     dat   = dat,          # dataset
     es    = T,            # report an event study
     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 20            # number of bootstrap runs
+    nReps = 10            # number of bootstrap runs
     )
 
 # report results for every event period
-(mod_res = cic_summary(mod) )
+(mod_res = summary_ecic(mod) )
 
 
 #> [[1]]
-#> perc es     coefs          se
-#>  0.1  0 0.9082170 0.042402882
-#>  0.2  0 0.9477988 0.009436464
-#>  0.3  0 0.9694125 0.013942156
-#>  0.4  0 1.0245454 0.019189802
-#>  0.5  0 1.0777637 0.011401043
-#>  0.6  0 1.1171074 0.005535331
-#>  0.7  0 1.1652509 0.008632115
-#>  0.8  0 1.2195577 0.014800394
-#>  0.9  0 1.3256676 0.015221564
+#> perc es     coefs         se
+#>  0.1  0 0.9175263 0.02924326
+#>  0.2  0 0.9675225 0.02508082
+#>  0.3  0 0.9959150 0.02116782
+#>  0.4  0 1.0388312 0.02373263
+#>  0.5  0 1.0992322 0.02558309
+#>  0.6  0 1.1496203 0.03078493
+#>  0.7  0 1.2049797 0.03654320
+#>  0.8  0 1.2519476 0.03291178
+#>  0.9  0 1.3616626 0.01765538
 
 #> [[2]]
 #> perc es    coefs          se
-#>  0.1  1 2.270552 0.014901316
-#>  0.2  1 2.225630 0.004805656
-#>  0.3  1 2.219548 0.018903208
-#>  0.4  1 2.254401 0.019642641
-#>  0.5  1 2.279502 0.011910761
-#>  0.6  1 2.285906 0.015449291
-#>  0.7  1 2.305432 0.014775212
-#>  0.8  1 2.346030 0.004632288
-#>  0.9  1 2.408531 0.029807759
+#>  0.1  1 2.393816 0.022273736
+#>  0.2  1 2.386941 0.020039276
+#>  0.3  1 2.423415 0.017145110
+#>  0.4  1 2.452259 0.017982620
+#>  0.5  1 2.484616 0.009979006
+#>  0.6  1 2.525388 0.012816760
+#>  0.7  1 2.575615 0.015196499
+#>  0.8  1 2.630959 0.019570320
+#>  0.9  1 2.730742 0.024796025
 
 #> [...]
 ```
 ### Plotting
 Event-study results can be plotted for every period individually with the option `es_type = "for_periods"`.
 ``` r
-cic_plot(
+plot_ecic(
     mod_res, 
     periods_plot = c(0, 2),   # which periods you want to show
     es_type = "for_periods",  # plots by period
@@ -152,12 +152,11 @@ cic_plot(
 
 Alternatively, `es_type = "for_quantiles"` generates one plot for every quantile of interest.
 ``` r
-cic_plot(
+plot_ecic(
     mod_res, 
     periods_plot = c(.1, .5, .9), # which quantiles you want to show
     es_type = "for_quantiles",    # plots by period
-    ylim = c(0, 4),               # same y-axis
-    zero_line = T                 # add a horizontal line at y = 0
+    ylim = c(.5, 5)               # same y-axis
     )
 ```
 <p align="center"> 
