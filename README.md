@@ -7,13 +7,12 @@
  <!-- badges: end -->
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
-cohorts as suggested in Athey and Imbens
-([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x)).
+cohorts as suggested in Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
 Changes-in-changes is a generalization of the difference-in-differences approach, estimating
 a treatment effect for the entire distribution instead of averages.
 
 Athey and Imbens
-([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x)).
+([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
 show how to extend the model to multiple periods and cohorts, analogously to a Two-Way Fixed-Effects model for averages.
 This package implements this, 
 calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.
@@ -166,7 +165,7 @@ plot_ecic(
 ## Under the hood
 ### Estimation
 For every treated cohort, we observe the distribution of the potential outcome $Y(1)$. 
-In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x)).
+In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
 show how to construct the counterfactual $Y(0)$.
 This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group.
 
