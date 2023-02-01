@@ -25,9 +25,8 @@
 ##' @param es Event Study (Logical). If TRUE, a quantile treatment effect is estimated for each period.
 ##' @param periods_es Periods of the event study.
 ##' @param short_output Only reports essential results.
-##' @param save_to_disk Logical. If TRUE, results are temporarily saved, reduces the
+##' @param save_to_temp Logical. If TRUE, results are temporarily saved, reduces the
 ##' RAM needed.
-##' @param myFolder Location of the temporary files.
 ##' @param nCores Number of cores used.
 ##' @return An `ecic` object.
 ##' @references 
@@ -77,8 +76,7 @@ ecic = function(
                 es = F, 
                 periods_es = 6, 
                 short_output = T, 
-                save_to_disk = F, 
-                myFolder = "temp", 
+                save_to_temp = F, 
                 nCores = 1
 )
 {
@@ -110,7 +108,7 @@ ecic = function(
   if (is.null(yvar))   stop("A non-NULL `yvar` argument is required.")
   if (!is.logical(es)) stop("`es` must be logical.")
   if (!is.logical(short_output)) stop("`short_output` must be logical.")
-  if (!is.logical(save_to_disk)) stop("`save_to_disk` must be logical.")
+  if (!is.logical(save_to_temp)) stop("`save_to_temp` must be logical.")
   if (!quant_algo %in% 1:9)      stop("Invalid quantile algorithm.")
   
   # Check bootstrap
@@ -122,7 +120,8 @@ ecic = function(
     nReps = 1
   }
   
-  if (save_to_disk == T & !dir.exists(paste0(getwd(), "/temp"))) dir.create(paste0(getwd(), "/temp"))
+#  if (save_to_temp == T & !dir.exists(paste0(getwd(), "/temp"))) dir.create(paste0(getwd(), "/temp"))
+  if (save_to_temp == T) temp_dir = tempdir()
   
   #-----------------------------------------------------------------------------
   # setup tvar and gvar
@@ -271,7 +270,7 @@ ecic = function(
       seq(min(dat[[yvar]]), max(dat[[yvar]]), length.out = no_imp), # a grid
       unique(dat[[yvar]]) # the observed data 
     )))
-
+    
     #-----------------------------------------------------------------------------
     # impute Y(0)
     y0_imp = lapply(y0, function(ecdf_temp) {
@@ -377,17 +376,20 @@ ecic = function(
     
     #---------------------------------------------------------------------------
     # save to disk (saver, but maybe slower)
-    if (save_to_disk == T) {
-      saveRDS(myQuant, file = paste0(getwd(), "/", myFolder, "/myQuant", j, ".rds"))
-      saveRDS(name_runs, file = paste0(getwd(), "/", myFolder, "/name_runs", j, ".rds"))
+    if (save_to_temp == T) {
+      tmp_quant = tempfile(paste0(pattern = "myQuant", j, "_"), fileext = ".rds", tmpdir = temp_dir)
+      tmp_name  = tempfile(paste0(pattern = "name_runs", j, "_"), fileext = ".rds", tmpdir = temp_dir)
+      
+      saveRDS(dat, file = tmp_quant)
+      saveRDS(name_runs, file = tmp_name)
       return(j)
     }
 
     # just work in the RAM (output lost if crash and RAM may be too small)
-    if (short_output == T & save_to_disk == F) {
+    if (short_output == T & save_to_temp == F) {
       return(list(coefs = myQuant, name_runs = name_runs))
     } 
-    if ((short_output == F & save_to_disk == F)) {
+    if ((short_output == F & save_to_temp == F)) {
       return(list(coefs = myQuant, n1 = n1, n0 = n0, name_runs = name_runs, y1 = y1, y0 = y0))
     }
   },
@@ -396,11 +398,11 @@ ecic = function(
 
   ##############################################################################
   # post-loop: combine the outputs files 
-  if(save_to_disk == T){
+  if(save_to_temp == T){
     myRuns = lapply(1:nReps, function(j){
       list(
-        coefs =  lapply(list.files( path = paste0(getwd(), "/", myFolder, "/"), pattern = paste0("myQuant", j, ".rds"), full.names = TRUE ), readRDS)[[1]],
-        name_runs =   lapply(list.files( path = paste0(getwd(), "/", myFolder, "/"), pattern = paste0("name_runs", j, ".rds"), full.names = TRUE ), readRDS)[[1]]
+        coefs     =   lapply(list.files( path = temp_dir, pattern = paste0("myQuant", j, ""), full.names = TRUE ), readRDS)[[1]],
+        name_runs =   lapply(list.files( path = temp_dir, pattern = paste0("name_runs", j, ""), full.names = TRUE ), readRDS)[[1]]
       )})
   }
 

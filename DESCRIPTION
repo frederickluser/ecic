@@ -1,14 +1,19 @@
 Package: ecic
 Title: Extended Changes-in-Changes
-Version: 0.0.0.9000
+Version: 0.0.1
 Authors@R: 
-    person("Frederic", "Kluser", , "frederic.kluser@unibe.ch", role = c("aut", "cre"),
+    person("Frederic", "Kluser", , "frederic.kluser@unibe.ch", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-4454-7572"))
-Description: Functions for implementing extended changes-in-changes models
-    a la Susan Athey and Guido Imbens (2006) with multiple cohorts and
-    time periods. Computes quantile treatment effects for all possible
-    two-by-two combinations (by aggregating the CDFs and inverting the
-    quantile functions). Then summarizes or plots the treatment effects.
+Description: Functions for extending the Changes-in-Changes model a la
+    Athey and Imbens (2006) <doi:10.1111/j.1468-0262.2006.00668.x> to
+    multiple cohorts and time periods, which generalizes
+    difference-in-differences estimation techniques to the entire
+    distribution. Computes quantile treatment effects for every possible
+    two-by-two combination in ecic(). Then, aggregating all bootstrap runs
+    adds the standard errors in summary_ecic(). Results can be plotted
+    with plot_ecic() aggregated over all cohort-group combinations or in
+    an event-study style for either individual periods or individual
+    quantiles.
 License: MIT + file LICENSE
 URL: https://frederickluser.github.io/ecic/
 BugReports: https://github.com/frederickluser/ecic/issues

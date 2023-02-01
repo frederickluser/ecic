@@ -21,8 +21,7 @@ ecic(
   es = F,
   periods_es = 6,
   short_output = T,
-  save_to_disk = F,
-  myFolder = "temp",
+  save_to_temp = F,
   nCores = 1
 )
 }
@@ -60,16 +59,14 @@ but might be weighted by period-cohort size ("weighted").}
 
 \item{no_imp}{Grid size for the imputation of the empirical CDF.}
 
-\item{es}{Event Study (Logical). If TRUE, a QTE is estimated for each period.}
+\item{es}{Event Study (Logical). If TRUE, a quantile treatment effect is estimated for each period.}
 
 \item{periods_es}{Periods of the event study.}
 
 \item{short_output}{Only reports essential results.}
 
-\item{save_to_disk}{Logical. If TRUE, results are temporarily saved, reduces the
+\item{save_to_temp}{Logical. If TRUE, results are temporarily saved, reduces the
 RAM needed.}
-
-\item{myFolder}{Location of the temporary files.}
 
 \item{nCores}{Number of cores used.}
 }
