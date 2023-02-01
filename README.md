@@ -6,7 +6,9 @@
  [![Codecov test coverage](https://codecov.io/gh/frederickluser/ecic/branch/main/graph/badge.svg)](https://app.codecov.io/gh/frederickluser/ecic?branch=main)
  <!-- badges: end -->
 
-`ecic` estimates a changes-in-changes model with multiple periods and 
+`e
+
+` estimates a changes-in-changes model with multiple periods and 
 cohorts as suggested in Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
 Changes-in-changes is a generalization of the difference-in-differences approach, estimating
 a treatment effect for the entire distribution instead of averages.
@@ -19,7 +21,7 @@ calculating standard errors via bootstrap and plotting results, aggregated or in
 
 ## Installation
 
-You can install `ecic` from Github.
+You can install `ecic` from GitHub.
 
 ``` r
 # install.packages("remotes")
@@ -169,7 +171,7 @@ In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](ht
 show how to construct the counterfactual $Y(0)$.
 This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group.
 
-Since we cannot simply average Quantile Treatment Effects, we must first store the empirical CDF of $Y(1)$ and $Y(0)$ for every two-by-two case. Note that, therefore, we cannot estimate a QTE for units treated in the first (no pre-period) and last period (no comparison cohort) and have to skip small cohorts (default `nMin = 40`) as we need more observations to estimate QTEs compared to an average effect.
+Since we cannot simply average Quantile Treatment Effects, we must first store the empirical CDF of $Y(1)$ and $Y(0)$ for every two-by-two case. Note that, therefore, we cannot estimate a quantile treatment effect for units treated in the first (no pre-treatment period) and last period (no comparison cohort) and have to skip small cohorts (default `nMin = 40`) as we need more observations to estimate quantile treatment effects compared to an average effect.
 
 ### Aggregation
 Next, I aggregate all estimated CDFs to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes.
