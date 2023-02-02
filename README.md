@@ -1,9 +1,8 @@
 
-# ecic: Extended Changes-in-Changes
+# Extended Changes-in-Changes (ECIC)
 
  <!-- badges: start -->
    [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
- [![Codecov test coverage](https://codecov.io/gh/frederickluser/ecic/branch/main/graph/badge.svg)](https://app.codecov.io/gh/frederickluser/ecic?branch=main)
  <!-- badges: end -->
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
@@ -60,10 +59,10 @@ mod =
     )
 ```
 `mod`contains for every bootstrap run a list of all 2-by-2 combinations (`$name_runs`) and the point-estimates.
-`summary_ecic` combines this and adds standard errors:
+`summary` combines this and adds standard errors:
 
 ``` r
-(mod_res = summary_ecic(mod) )
+mod_res = summary(mod) 
 
 #> perc    coefs         se
 #>  0.1 1.215531 0.02670761
@@ -79,9 +78,9 @@ mod =
 ```
 
 ### Plotting
-Finally, results can be plotted using `plot_ecic`.
+Finally, results can be plotted using `ecic_plot`.
 ``` r
-plot_ecic(mod_res)
+ecic_plot(mod_res)
 ```
 <p align="center"> 
  <img src="man/figures/plot_avg.png" width="100%" style="display: block; margin: auto;" />
@@ -89,7 +88,7 @@ plot_ecic(mod_res)
 
 ## Event-Study Example
 The package also allows to report _event-study-style_ results of the effect.
-To do so, simply add the `es = T` argument to the estimation and `summary_ecic` will report effects for every event period.
+To do so, simply add the `es = T` argument to the estimation and `summary` will report effects for every event period.
 ``` r
 # Estimate the model
 mod =
@@ -105,8 +104,7 @@ mod =
     )
 
 # report results for every event period
-(mod_res = summary_ecic(mod) )
-
+mod_res = summary(mod) 
 
 #> [[1]]
 #> perc es     coefs         se
@@ -137,7 +135,7 @@ mod =
 ### Plotting
 Event-study results can be plotted for every period individually with the option `es_type = "for_periods"`.
 ``` r
-plot_ecic(
+ecic_plot(
     mod_res, 
     periods_plot = c(0, 2),   # which periods you want to show
     es_type = "for_periods",  # plots by period
@@ -151,7 +149,7 @@ plot_ecic(
 
 Alternatively, `es_type = "for_quantiles"` generates one plot for every quantile of interest.
 ``` r
-plot_ecic(
+ecic_plot(
     mod_res, 
     periods_plot = c(.1, .5, .9), # which quantiles you want to show
     es_type = "for_quantiles",    # plots by period
@@ -173,7 +171,7 @@ Since we cannot simply average Quantile Treatment Effects, we must first store t
 
 ### Aggregation
 Next, I aggregate all estimated CDFs to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes.
-Technically, `ecic` generates a grid of size `no_imp = 1e5` and imputes all empirical CDFs.
+Technically, `ecic` generates a grid over the dependent variable and imputes all empirical CDFs.
 
 ### Bootstrap
 I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 100`).
