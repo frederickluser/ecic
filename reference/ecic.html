@@ -64,11 +64,12 @@
 <span>  weight_n0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n0"</span><span class="op">)</span>,</span>
 <span>  weight_n1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n0"</span><span class="op">)</span>,</span>
 <span>  quant_algo <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  es <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  es <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  n_digits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  periods_es <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>  short_output <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>  save_to_temp <span class="op">=</span> <span class="cn">F</span>,</span>
+<span>  short_output <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  save_to_temp <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  print_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  nCores <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -92,7 +93,7 @@ the group variable typically denotes treatment cohort.</p></dd>
 
 <dt>ivar</dt>
 <dd><p>Index variable. Can be a string (e.g., "country") or an
-expression (e.g., country).</p></dd>
+expression (e.g., country). Only needed to check cohort sizes.</p></dd>
 
 
 <dt>dat</dt>
@@ -153,6 +154,10 @@ of RAM used in large data sets.</p></dd>
 RAM needed.</p></dd>
 
 
+<dt>print_details</dt>
+<dd><p>Logical. If TRUE, settings are printed as a check at the beginning.</p></dd>
+
+
 <dt>nCores</dt>
 <dd><p>Number of cores used.</p></dd>
 
@@ -172,13 +177,34 @@ Nonlinear Difference-in-Differences Models</cite>.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># Load some sample data</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Example 1. Using the small mpdta data in the did package</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dat</span>, package <span class="op">=</span> <span class="st">"ecic"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dat</span> <span class="op">=</span> <span class="va">dat</span><span class="op">[</span><span class="va">dat</span><span class="op">$</span><span class="va">first.treat</span> <span class="op">&lt;=</span> <span class="fl">1983</span> <span class="op">&amp;</span> <span class="va">dat</span><span class="op">$</span><span class="va">countyreal</span> <span class="op">&lt;=</span> <span class="fl">1000</span>,<span class="op">]</span> <span class="co"># small data for fast running time</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mod_res</span> <span class="op">=</span> </span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu">ecic</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    yvar  <span class="op">=</span> <span class="va">lemp</span>,         <span class="co"># dependent variable</span></span></span>
+<span class="r-in"><span>    gvar  <span class="op">=</span> <span class="va">first.treat</span>,  <span class="co"># group indicator</span></span></span>
+<span class="r-in"><span>    tvar  <span class="op">=</span> <span class="va">year</span>,         <span class="co"># time indicator</span></span></span>
+<span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
+<span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,        <span class="co"># dataset</span></span></span>
+<span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"normal"</span>,     <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">3</span>             <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Basic Plot</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="ecic-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Example 2. Load some larger sample data</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dat</span>, package <span class="op">=</span> <span class="st">"ecic"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Estimate a basic model</span></span></span>
+<span class="r-in"><span><span class="co"># Estimate a basic model with the package's sample data</span></span></span>
 <span class="r-in"><span><span class="va">mod_res</span> <span class="op">=</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="summary_ecic.html">summary_ecic</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu">ecic</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    yvar  <span class="op">=</span> <span class="va">lemp</span>,         <span class="co"># dependent variable</span></span></span>
 <span class="r-in"><span>    gvar  <span class="op">=</span> <span class="va">first.treat</span>,  <span class="co"># group indicator</span></span></span>
@@ -189,11 +215,53 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>            <span class="co"># number of bootstrap runs</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Started a changes-in-changes model for 5 groups and 60000 observations with 20 (weighted) bootstrap replications."</span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># Basic Plot</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot_ecic.html">plot_ecic</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="ecic-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="ecic-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Example 3. An Event-Study Example</span></span></span>
+<span class="r-in"><span><span class="va">mod_res</span> <span class="op">=</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="fu">ecic</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    es    <span class="op">=</span> <span class="cn">TRUE</span>,         <span class="co"># aggregate for every event period</span></span></span>
+<span class="r-in"><span>    yvar  <span class="op">=</span> <span class="va">lemp</span>,         <span class="co"># dependent variable</span></span></span>
+<span class="r-in"><span>    gvar  <span class="op">=</span> <span class="va">first.treat</span>,  <span class="co"># group indicator</span></span></span>
+<span class="r-in"><span>    tvar  <span class="op">=</span> <span class="va">year</span>,         <span class="co"># time indicator</span></span></span>
+<span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
+<span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,          <span class="co"># dataset</span></span></span>
+<span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"weighted"</span>,   <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>            <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 1: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 2: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 3: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 4: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 5: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 6: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 7: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 8: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 9: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 10: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 11: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 12: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 13: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 14: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 15: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 16: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 17: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 18: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 19: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 20: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-in"><span>  </span></span>
+<span class="r-in"><span><span class="co"># Plots</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span> <span class="co"># aggregated in one plot</span></span></span>
+<span class="r-plt img"><img src="ecic-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span>, es_type <span class="op">=</span> <span class="st">"for_quantiles"</span><span class="op">)</span> <span class="co"># individually for every quantile</span></span></span>
+<span class="r-plt img"><img src="ecic-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span>, es_type <span class="op">=</span> <span class="st">"for_periods"</span><span class="op">)</span> <span class="co"># individually for every period</span></span></span>
+<span class="r-plt img"><img src="ecic-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
