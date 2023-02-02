@@ -1,13 +1,14 @@
-##' @title Summary for a changes-in-changes model with multiple periods and cohorts
+##' @title Summary for a changes-in-changes regression with multiple periods and cohorts
 ##' 
-##' @description Summarizes an `ecic` model by aggregating the bootstrap runs. 
+##' @description Summarizes an `ecic` object by aggregating the bootstrap runs. 
 ##' Works also in an event-study fashion.
 ##'  
 ##' @param object An `ecic` object.
-##' @return An `ecic_res` object.
+##' @param ... further arguments.
+##' @return An `ecic_table` object.
 ##' @importFrom stats sd
 ##' @export
-summary_ecic = function(object) {
+summary.ecic = function(object, ...) {
 
   if(class(object)[1] != "ecic") stop("`object` needs to be a valid ecic object.\n")
   
@@ -16,7 +17,7 @@ summary_ecic = function(object) {
   myProbs    = attributes(object)[["ecic"]][["myProbs"]]
   
   # for average QTEs -----------------------------------------------------------
-  if (es == F) { 
+  if (es == FALSE) { 
 
     myCoefs = lapply(object, "[[", 1) # extract the coefficients from output list
     object_matrix = do.call(cbind, lapply(myCoefs, function(x) x[names(x) %in% "values"]))
@@ -46,8 +47,8 @@ summary_ecic = function(object) {
     })
   }
   
-  class(myBoot) = c("ecic_res", class(myBoot))
-  attr(myBoot, "ecic_res") = list(
+  class(myBoot) = c("ecic_table", class(myBoot))
+  attr(myBoot, "ecic_table") = list(
     es         = es,
     periods_es = periods_es,
     myProbs    = myProbs

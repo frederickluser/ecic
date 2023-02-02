@@ -17,11 +17,12 @@ ecic(
   weight_n0 = c("n1", "n0"),
   weight_n1 = c("n1", "n0"),
   quant_algo = 1,
-  es = F,
+  es = FALSE,
   n_digits = NULL,
   periods_es = 6,
-  short_output = T,
-  save_to_temp = F,
+  short_output = TRUE,
+  save_to_temp = FALSE,
+  print_details = FALSE,
   nCores = 1
 )
 }
@@ -36,7 +37,7 @@ the group variable typically denotes treatment cohort.}
 (e.g., year).}
 
 \item{ivar}{Index variable. Can be a string (e.g., "country") or an
-expression (e.g., country).}
+expression (e.g., country). Only needed to check cohort sizes.}
 
 \item{dat}{The data set.}
 
@@ -70,6 +71,8 @@ of RAM used in large data sets.}
 \item{save_to_temp}{Logical. If TRUE, results are temporarily saved, reduces the
 RAM needed.}
 
+\item{print_details}{Logical. If TRUE, settings are printed as a check at the beginning.}
+
 \item{nCores}{Number of cores used.}
 }
 \value{
@@ -79,13 +82,33 @@ An \code{ecic} object.
 Calculates a changes-in-changes model as in Athey and Imbens (2006) for multiple periods and cohorts.
 }
 \examples{
+# Example 1. Using the small mpdta data in the did package
+data(dat, package = "ecic")
+dat = dat[dat$first.treat <= 1983 & dat$countyreal <= 1000,] # small data for fast running time
+
+mod_res = 
+  summary(
+  ecic(
+    yvar  = lemp,         # dependent variable
+    gvar  = first.treat,  # group indicator
+    tvar  = year,         # time indicator
+    ivar  = countyreal,   # unit ID
+    dat   = dat,        # dataset
+    boot  = "normal",     # bootstrap proceduce ("no", "normal", or "weighted")
+    nReps = 3             # number of bootstrap runs
+    )
+    )
+
+# Basic Plot
+ecic_plot(mod_res)
+
 \donttest{
-# Load some sample data
+# Example 2. Load some larger sample data
 data(dat, package = "ecic")
 
-# Estimate a basic model
+# Estimate a basic model with the package's sample data
 mod_res =
-  summary_ecic(
+  summary(
   ecic(
     yvar  = lemp,         # dependent variable
     gvar  = first.treat,  # group indicator
@@ -98,7 +121,27 @@ mod_res =
   )
   
 # Basic Plot
-plot_ecic(mod_res)
+ecic_plot(mod_res)
+
+# Example 3. An Event-Study Example
+mod_res =
+  summary(
+  ecic(
+    es    = TRUE,         # aggregate for every event period
+    yvar  = lemp,         # dependent variable
+    gvar  = first.treat,  # group indicator
+    tvar  = year,         # time indicator
+    ivar  = countyreal,   # unit ID
+    dat   = dat,          # dataset
+    boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
+    nReps = 20            # number of bootstrap runs
+  )
+  )
+  
+# Plots
+ecic_plot(mod_res) # aggregated in one plot
+ecic_plot(mod_res, es_type = "for_quantiles") # individually for every quantile
+ecic_plot(mod_res, es_type = "for_periods") # individually for every period
 }
 }
 \references{

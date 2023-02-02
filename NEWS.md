@@ -1,10 +1,18 @@
-## version 0.0.1
+## version 0.0.2
 
 ---
 
 
-### Initial Submission
+### Resubmission to CRAN
 
-- This is the initial version submitted to CRAN.
+- Minor changes for CRAN.
+
+
+## version 0.0.0.9000
+
+---
+
+### NEWS.md setup
+
 - added NEWS.md creation with newsmd
 

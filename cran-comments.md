@@ -1,3 +1,17 @@
+## RESUBMISSION
+
+I thank Benjamin Altmann for his great comments. I tackled them as follows.
+
+* I obmitted "functions for" in the DESCRIPTION.
+
+* I replaced T / F with TRUE / FALSE everywhere.
+
+* I added a toy example without donttest that runs in under 5 seconds.
+
+* I replaced all print() calls with messages. They won't be shown now by default.
+
+* In addition, I reran the checks listed below. Their results were identical as in the first submission.
+
 ## R CMD check results
 
 There were no ERRORs or WARNINGs. 

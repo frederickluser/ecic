@@ -364,7 +364,10 @@ summary1_known <-
   ), se = c(
     NA_real_, NA_real_,
     NA_real_, NA_real_, NA_real_, NA_real_, NA_real_, NA_real_, NA_real_
-  )), class = c("ecic_res", "data.frame"), row.names = c(NA, -9L), ecic_res = list(es = FALSE, periods_es = NA, myProbs = c(
+  )), class = c("ecic_table", "data.frame"), row.names = c(
+    NA,
+    -9L
+  ), ecic_table = list(es = FALSE, periods_es = NA, myProbs = c(
     0.1,
     0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
   )))
@@ -420,9 +423,9 @@ summary2_known <-
       0.00559853632531547, 0.0108059580536119, 0.011686289454775
     )
   ), class = "data.frame", row.names = c(NA, -9L))), class = c(
-    "ecic_res",
+    "ecic_table",
     "list"
-  ), ecic_res = list(es = TRUE, periods_es = 3, myProbs = c(
+  ), ecic_table = list(es = TRUE, periods_es = 3, myProbs = c(
     0.1,
     0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
   )))
@@ -455,11 +458,12 @@ es1 <- ecic(
 expect_equal(es1, es1_known)
 
 # summary
-sum1 <- summary_ecic(ecic1)
-sum2 <- summary_ecic(es1)
+sum1 <- summary(ecic1)
+sum2 <- summary(es1)
 
 expect_equal(sum1, summary1_known)
 expect_equal(sum2, summary2_known)
 
 # plot
 expect_error(plot_ecic(sum2, es_type = "nos")) # error
+expect_error(plot(es2))

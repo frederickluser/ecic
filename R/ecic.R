@@ -9,7 +9,7 @@
 ##' @param tvar Time variable. Can be a string (e.g., "year") or an expression
 ##' (e.g., year).
 ##' @param ivar Index variable. Can be a string (e.g., "country") or an 
-##' expression (e.g., country).
+##' expression (e.g., country). Only needed to check cohort sizes.
 ##' @param dat The data set.
 ##' @param myProbs Quantiles that the quantile treatment effects should be calculated for.
 ##' @param nMin Minimum observations per groups. Small groups are deleted.
@@ -29,6 +29,7 @@
 ##' @param short_output Only reports essential results.
 ##' @param save_to_temp Logical. If TRUE, results are temporarily saved, reduces the
 ##' RAM needed.
+##' @param print_details Logical. If TRUE, settings are printed as a check at the beginning.
 ##' @param nCores Number of cores used.
 ##' @return An `ecic` object.
 ##' @references 
@@ -36,13 +37,33 @@
 ##' Nonlinear Difference-in-Differences Models}. 
 ##' \doi{10.1111/j.1468-0262.2006.00668.x}
 ##' @examples 
+##' # Example 1. Using the small mpdta data in the did package
+##' data(dat, package = "ecic")
+##' dat = dat[dat$first.treat <= 1983 & dat$countyreal <= 1000,] # small data for fast running time
+##' 
+##' mod_res = 
+##'   summary(
+##'   ecic(
+##'     yvar  = lemp,         # dependent variable
+##'     gvar  = first.treat,  # group indicator
+##'     tvar  = year,         # time indicator
+##'     ivar  = countyreal,   # unit ID
+##'     dat   = dat,        # dataset
+##'     boot  = "normal",     # bootstrap proceduce ("no", "normal", or "weighted")
+##'     nReps = 3             # number of bootstrap runs
+##'     )
+##'     )
+##' 
+##' # Basic Plot
+##' ecic_plot(mod_res)
+##' 
 ##' \donttest{
-##' # Load some sample data
+##' # Example 2. Load some larger sample data
 ##' data(dat, package = "ecic")
 ##' 
-##' # Estimate a basic model
+##' # Estimate a basic model with the package's sample data
 ##' mod_res =
-##'   summary_ecic(
+##'   summary(
 ##'   ecic(
 ##'     yvar  = lemp,         # dependent variable
 ##'     gvar  = first.treat,  # group indicator
@@ -55,7 +76,27 @@
 ##'   )
 ##'   
 ##' # Basic Plot
-##' plot_ecic(mod_res)
+##' ecic_plot(mod_res)
+##' 
+##' # Example 3. An Event-Study Example
+##' mod_res =
+##'   summary(
+##'   ecic(
+##'     es    = TRUE,         # aggregate for every event period
+##'     yvar  = lemp,         # dependent variable
+##'     gvar  = first.treat,  # group indicator
+##'     tvar  = year,         # time indicator
+##'     ivar  = countyreal,   # unit ID
+##'     dat   = dat,          # dataset
+##'     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
+##'     nReps = 20            # number of bootstrap runs
+##'   )
+##'   )
+##'   
+##' # Plots
+##' ecic_plot(mod_res) # aggregated in one plot
+##' ecic_plot(mod_res, es_type = "for_quantiles") # individually for every quantile
+##' ecic_plot(mod_res, es_type = "for_periods") # individually for every period
 ##' }
 ##' @importFrom stats aggregate quantile sd
 ##' @import future
@@ -74,11 +115,12 @@ ecic = function(
                 weight_n0 = c("n1", "n0"),
                 weight_n1 = c("n1", "n0"),
                 quant_algo = 1, 
-                es = F, 
+                es = FALSE, 
                 n_digits = NULL,
                 periods_es = 6, 
-                short_output = T, 
-                save_to_temp = F, 
+                short_output = TRUE, 
+                save_to_temp = FALSE, 
+                print_details = FALSE,
                 nCores = 1
 )
 {
@@ -122,15 +164,14 @@ ecic = function(
     nReps = 1
   }
   
-#  if (save_to_temp == T & !dir.exists(paste0(getwd(), "/temp"))) dir.create(paste0(getwd(), "/temp"))
-  if (save_to_temp == T) temp_dir = tempdir()
+  if (save_to_temp == TRUE) temp_dir = tempdir()
   
   #-----------------------------------------------------------------------------
   # setup tvar and gvar
   dat = subset(dat, get(gvar) %in% unique(dat[[tvar]])) # exclude never-treated units
 
-  first_period = min(dat[[tvar]], na.rm = T)
-  last_cohort  = max(dat[[gvar]], na.rm = T) - first_period
+  first_period = min(dat[[tvar]], na.rm = TRUE)
+  last_cohort  = max(dat[[gvar]], na.rm = TRUE) - first_period
 
   dat[[tvar]]  = dat[[tvar]]-(first_period-1) # start tvar at 1
   dat[[gvar]]  = dat[[gvar]]-(first_period-1) # start gvar at 1
@@ -148,10 +189,10 @@ ecic = function(
     ) - 1
   
   # Print settings
-  if(is.null(boot)){
-    print(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations. No standard errors computed."))
-  } else {
-    print(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations with ", nReps, " (", boot, ") bootstrap replications."))
+  if (print_details == TRUE & is.null(boot)) {
+    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations. No standard errors computed."))
+  } else if (print_details == TRUE & !is.null(boot)) {
+    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations with ", nReps, " (", boot, ") bootstrap replications."))
   }
   
   # calculate group sizes
@@ -167,13 +208,13 @@ ecic = function(
   # Calculate all 2-by-2 CIC combinations
   
   if (.Platform$OS.type == "windows"){
-    future::plan(future::multisession, workers = nCores, gc = T)
+    future::plan(future::multisession, workers = nCores, gc = TRUE)
   } else {
-    future::plan(future::multicore, workers = nCores, gc = T) 
+    future::plan(future::multicore, workers = nCores, gc = TRUE) 
   }
   
   # Calculate bootstrap for all possible 2x2 combinations
-  myRuns = furrr::future_map(1:nReps, function(j) {
+  res = furrr::future_map(1:nReps, function(j) {
 
     n1 = n0 = vector()
     y1 = y0 = name_runs = vector("list")
@@ -183,7 +224,7 @@ ecic = function(
         if (boot == "weighted") {
           cell_sizes = stats::aggregate(stats::as.formula(paste(". ~ ", gvar, "+", tvar)), data = dat, FUN = length)[c(gvar, tvar, yvar)] # count cohort-period combinations
           names(cell_sizes)[names(cell_sizes) == yvar] = "N"
-          dat = merge(dat, cell_sizes, all.x = T)
+          dat = merge(dat, cell_sizes, all.x = TRUE)
           data_boot = dat[sample(1:nrow(dat), size = nrow(dat), replace = TRUE, prob = dat$N), ]
           
         } else if (boot == "normal") {
@@ -208,7 +249,7 @@ ecic = function(
         qte_year = qte_year[qte_year < preCohort] # control has to be untreated
         
         # for event study: only calculate periods you're interested in
-        if (es == T) qte_year = qte_year[qte_year - qteCohort <= periods_es]
+        if (es == TRUE) qte_year = qte_year[qte_year - qteCohort <= periods_es]
         
         for (qteYear in qte_year) {
           
@@ -226,11 +267,11 @@ ecic = function(
             nrow_control = nrow(subset(data_loop, treat == 0))
             
             if (nrow_treat < nMin){
-              warning(paste0("Skipped run ", i, " (too small treatment group)"))
+              warning(paste0("Skipped a period-cohort group in bootstrap run ", j, " (too small treatment group)"))
               next
             }
             if (nrow_control < nMin){
-              warning(paste0("Skipped run ", i, " (too small control group)"))
+              warning(paste0("Skipped a period-cohort group in bootstrap run ", j, " (too small treatment group)"))
               next
             }            
             
@@ -299,7 +340,7 @@ ecic = function(
     gc()
     
     #---------------------------------------------------------------------------
-    if (es == F) { # average QTE
+    if (es == FALSE) { # average QTE
       
       # impute Y(1)
       y1_imp = lapply(y1, function(ecdf_temp) {
@@ -379,7 +420,7 @@ ecic = function(
     
     #---------------------------------------------------------------------------
     # save to disk (saver, but maybe slower)
-    if (save_to_temp == T) {
+    if (save_to_temp == TRUE) {
       tmp_quant = tempfile(paste0(pattern = "myQuant", j, "_"), fileext = ".rds", tmpdir = temp_dir)
       tmp_name  = tempfile(paste0(pattern = "name_runs", j, "_"), fileext = ".rds", tmpdir = temp_dir)
       
@@ -389,20 +430,20 @@ ecic = function(
     }
 
     # just work in the RAM (output lost if crash and RAM may be too small)
-    if (short_output == T & save_to_temp == F) {
+    if (short_output == TRUE & save_to_temp == FALSE) {
       return(list(coefs = myQuant, name_runs = name_runs))
     } 
-    if ((short_output == F & save_to_temp == F)) {
+    if ((short_output == FALSE & save_to_temp == FALSE)) {
       return(list(coefs = myQuant, n1 = n1, n0 = n0, name_runs = name_runs, y1 = y1, y0 = y0))
     }
   },
-  .options = furrr::furrr_options(seed = 123), .progress = T
+  .options = furrr::furrr_options(seed = 123), .progress = TRUE
   )
 
   ##############################################################################
   # post-loop: combine the outputs files 
-  if(save_to_temp == T){
-    myRuns = lapply(1:nReps, function(j){
+  if(save_to_temp == TRUE){
+    res = lapply(1:nReps, function(j){
       list(
         coefs     =   lapply(list.files( path = temp_dir, pattern = paste0("myQuant", j, ""), full.names = TRUE ), readRDS)[[1]],
         name_runs =   lapply(list.files( path = temp_dir, pattern = paste0("name_runs", j, ""), full.names = TRUE ), readRDS)[[1]]
@@ -410,18 +451,18 @@ ecic = function(
   }
 
   # post-loop: Overload class and new attributes (for post-estimation) ----
-  if(es == T) {
-    periods_es = max(lengths(lapply(myRuns, "[[", 1))-1) # substact contemporary
+  if(es == TRUE) {
+    periods_es = max(lengths(lapply(res, "[[", 1))-1) # substact contemporary
   } else {
     periods_es = NA
   }
   
-  class(myRuns) = c("ecic", class(myRuns))
-  attr(myRuns, "ecic") = list(
-    myProbs = myProbs,
-    es = es,
+  class(res) = c("ecic", class(res))
+  attr(res, "ecic") = list(
+    myProbs    = myProbs,
+    es         = es,
     periods_es = periods_es
   )
   
-  return(myRuns)
+  return(res)
 }

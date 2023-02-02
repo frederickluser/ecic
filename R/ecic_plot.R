@@ -3,7 +3,7 @@
 ##' @description Plots the results of the `ecic` model, either along
 ##' the percentiles or in an event-study fashion.
 ##' 
-##' @param object An `ecic` object.
+##' @param object An `ecic_table` object.
 ##' @param es_type If an event study was estimated with `ecic`, you can choose the 
 ##' style of the ES plot. "aggregated" puts everything in one plot. "for_quantiles"
 ##' generates one plot for each percentile. "for_periods" generates one plot for each period.
@@ -18,7 +18,7 @@
 ##' @return A `ggplot2` object.
 ##' @importFrom stats sd
 ##' @export
-plot_ecic = function(object, 
+ecic_plot = function(object, 
                      es_type = c("aggregated", "for_quantiles", "for_periods"),
                      perc_plot = NULL,
                      periods_plot = NULL,        
@@ -26,24 +26,26 @@ plot_ecic = function(object,
                      ylab = "QTE \n", 
                      ylim = NULL, 
                      size = 2, 
-                     zero_line = F,
+                     zero_line = FALSE,
                      legend_title = "Percentiles") {
   
+  if(class(object)[1] != "ecic_table") stop("`object` needs to be a valid ecic_table object.\n")
+  
   es_type    = match.arg(es_type)
-  es         = attributes(object)[["ecic_res"]][["es"]]
-  periods_es = attributes(object)[["ecic_res"]][["periods_es"]]
-  myProbs    = attributes(object)[["ecic_res"]][["myProbs"]]
+  es         = attributes(object)[["ecic_table"]][["es"]]
+  periods_es = attributes(object)[["ecic_table"]][["periods_es"]]
+  myProbs    = attributes(object)[["ecic_table"]][["myProbs"]]
 
   perc = coefs = se = NULL
-  if (es == F) es_type = NULL
-  if (is.null(perc_plot)) perc_plot = myProbs
+  if (es == FALSE) es_type = NULL
+  if(is.null(perc_plot)) perc_plot = myProbs
   
   if (!is.logical(zero_line)) stop("`zero_line` must be logical.")
-  if (class(object)[1] != "ecic_res") stop("`object` must be a ecic_res object. Run cic_summary first.")
+  if (class(object)[1] != "ecic_table") stop("`object` must be a ecic_table object. Run cic_summary first.")
   if (!is.null(es_type) & (periods_es == 0 | is.na(periods_es))) warning("There is only one period. Average QTEs are plotted.")
 
   # Plot the average QTE -------------------------------------------------------
-  if (es == F) {
+  if (es == FALSE) {
     
     if (is.null(xlab)) xlab = "\n Percentiles"
 
@@ -59,8 +61,8 @@ plot_ecic = function(object,
       ggplot2::xlab(xlab) +
       ggplot2::ylab(ylab)
     
-    if (zero_line == T) p = p + ggplot2::geom_hline(yintercept = 0, col = "grey60")
-    p
+    if (zero_line == TRUE) p = p + ggplot2::geom_hline(yintercept = 0, col = "grey60")
+    return(p)
     
   # Plot an event study for ALL percentiles jointly ----------------------------
   } else if (es_type == "aggregated"){
@@ -84,7 +86,7 @@ plot_ecic = function(object,
       ggplot2::ylab(ylab) +
       ggplot2::labs(color = legend_title)
     
-    if (zero_line == T) p = p + ggplot2::geom_hline(yintercept = 0, col = "grey60")
+    if (zero_line == TRUE) p = p + ggplot2::geom_hline(yintercept = 0, col = "grey60")
     p
     
     # plot every group individually ----
@@ -94,9 +96,8 @@ plot_ecic = function(object,
     plot_ylab  = "QTE \n"
     plot_xlab  = "\n Period"
     plot_data  = subset(do.call(rbind, object), perc %in% perc_plot)
-    if(is.null(perc_plot)) perc_plot = myProbs
     
-    for (i in 1:length(perc_plot)){
+    for (i in seq_along(perc_plot) ){
       assign(paste0("es", i), 
              ggplot2::ggplot(
                subset(plot_data, perc == perc_plot[i]), 
@@ -111,17 +112,17 @@ plot_ecic = function(object,
                ggplot2::ylab(plot_ylab) + 
                ggplot2::ggtitle(paste0(plot_title, perc_plot[i]*10))
       )
-      if (zero_line == T) assign(paste0("es", i), get(paste0("es", i)) + ggplot2::geom_hline(yintercept = 0, col = "grey60"))
+      if (zero_line == TRUE) assign(paste0("es", i), get(paste0("es", i)) + ggplot2::geom_hline(yintercept = 0, col = "grey60"))
     }
     
-    for (i in 1:length(perc_plot)){
-      if (i == 1){
+    for (i in seq_along(perc_plot)) {
+      if (i == 1) {
         p = list(get("es1"))
       } else {
         p[[length(p)+1]] = get(paste0("es", i))
       }
     }
-    patchwork::wrap_plots(p)
+    return(patchwork::wrap_plots(p))
     
     # plot every period individually ----
   } else if (es_type == "for_periods"){
@@ -129,14 +130,14 @@ plot_ecic = function(object,
     plot_title = "Period "
     plot_ylab  = "QTE \n"
     plot_xlab  = "\n Quantile"
-    plot_data  = subset(do.call(rbind, object), es %in% periods_plot)
     myPeriods  =  0:periods_es
-    if(!is.null(periods_plot)) myPeriods = periods_plot
+    if(is.null(periods_plot)) periods_plot = myPeriods
+    plot_data  = subset(do.call(rbind, object), es %in% periods_plot)
     
-    for (i in myPeriods){
+    for (i in seq_along(periods_plot)){
       assign(paste0("es", i), 
              ggplot2::ggplot(
-               subset(plot_data, es == i), 
+               subset(plot_data, es == periods_plot[i]), 
                ggplot2::aes(x = perc, y = coefs, group = 1)
                ) +
                ggplot2::geom_ribbon(ggplot2::aes(ymin = coefs - 1.96 * se, ymax = coefs + 1.96 * se), alpha = .2, fill = "deepskyblue2") +
@@ -146,19 +147,19 @@ plot_ecic = function(object,
                ggplot2::coord_cartesian(ylim = ylim) +
                ggplot2::xlab(plot_xlab) + 
                ggplot2::ylab(plot_ylab) + 
-               ggplot2::ggtitle(paste0(plot_title, i))
+               ggplot2::ggtitle(paste0(plot_title, periods_plot[i]))
       )
-      if (zero_line == T) assign(paste0("es", i), get(paste0("es", i)) + ggplot2::geom_hline(yintercept = 0, col = "grey60"))
+      if (zero_line == TRUE) assign(paste0("es", i), get(paste0("es", i)) + ggplot2::geom_hline(yintercept = 0, col = "grey60"))
     }
     
-    for (i in myPeriods){
-      if (i == 0){
-        p = list(get("es0"))
+    for (i in seq_along(periods_plot)){
+      if (i == 1){
+        p = list(get("es1"))
       } else {
         p[[length(p)+1]] = get(paste0("es", i))
       }
     }
-    patchwork::wrap_plots(p)
+    return(patchwork::wrap_plots(p))
   }
 }
 
