@@ -207,11 +207,7 @@ ecic = function(
   ################################################################################
   # Calculate all 2-by-2 CIC combinations
   
-  if (.Platform$OS.type == "windows"){
-    future::plan(future::multisession, workers = nCores, gc = TRUE)
-  } else {
-    future::plan(future::multicore, workers = nCores, gc = TRUE) 
-  }
+  future::plan(future::multisession, workers = nCores, gc = TRUE)
   
   # Calculate bootstrap for all possible 2x2 combinations
   res = furrr::future_map(1:nReps, function(j) {
