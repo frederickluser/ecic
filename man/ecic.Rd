@@ -17,8 +17,8 @@ ecic(
   weight_n0 = c("n1", "n0"),
   weight_n1 = c("n1", "n0"),
   quant_algo = 1,
-  no_imp = 1e+05,
   es = F,
+  n_digits = NULL,
   periods_es = 6,
   short_output = T,
   save_to_temp = F,
@@ -57,9 +57,11 @@ but might be weighted by period-cohort size ("weighted").}
 
 \item{quant_algo}{Quantile algorithm (see Wikipedia for definitions).}
 
-\item{no_imp}{Grid size for the imputation of the empirical CDF.}
-
 \item{es}{Event Study (Logical). If TRUE, a quantile treatment effect is estimated for each period.}
+
+\item{n_digits}{Rounding the dependent variable before aggregating the empirical CDFs
+reduces the size of the imputation grid. This can significantly reduce the amount
+of RAM used in large data sets.}
 
 \item{periods_es}{Periods of the event study.}
 

@@ -21,8 +21,10 @@
 ##' @param weight_n1 Weight for the aggregation of the CDFs in the treatment group. 
 ##' `n1` uses cohort sizes (Alternative: `n0`).
 ##' @param quant_algo Quantile algorithm (see Wikipedia for definitions).
-##' @param no_imp Grid size for the imputation of the empirical CDF.
 ##' @param es Event Study (Logical). If TRUE, a quantile treatment effect is estimated for each period.
+##' @param n_digits Rounding the dependent variable before aggregating the empirical CDFs 
+##' reduces the size of the imputation grid. This can significantly reduce the amount 
+##' of RAM used in large data sets.
 ##' @param periods_es Periods of the event study.
 ##' @param short_output Only reports essential results.
 ##' @param save_to_temp Logical. If TRUE, results are temporarily saved, reduces the
@@ -72,8 +74,8 @@ ecic = function(
                 weight_n0 = c("n1", "n0"),
                 weight_n1 = c("n1", "n0"),
                 quant_algo = 1, 
-                no_imp = 1e5, 
                 es = F, 
+                n_digits = NULL,
                 periods_es = 6, 
                 short_output = T, 
                 save_to_temp = F, 
@@ -266,10 +268,11 @@ ecic = function(
     name_runs = cbind(do.call(rbind, name_runs), n1, n0) # specifications of the runs
 
     # prepare imputation values
-    values_to_impute = unique(sort(c(
-      seq(min(dat[[yvar]]), max(dat[[yvar]]), length.out = no_imp), # a grid
-      unique(dat[[yvar]]) # the observed data 
-    )))
+    if (!is.null(n_digits)) {
+      values_to_impute = sort(unique( round( dat[[yvar]], digits = n_digits)) )
+    } else {
+      values_to_impute = sort(unique( dat[[yvar]] ))
+    }  
     
     #-----------------------------------------------------------------------------
     # impute Y(0)
