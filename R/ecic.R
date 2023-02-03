@@ -180,9 +180,10 @@ ecic = function(
     nReps = 1
   }
   
-  if (save_to_temp == TRUE) temp_dir = tempdir()
-  
-  #-----------------------------------------------------------------------------
+  # for saving to disk
+  if (save_to_temp == TRUE) random_num = sample(1:1e6, 1)
+
+    #-----------------------------------------------------------------------------
   # Prepare the data
   dat = subset(dat, get(gvar) %in% unique(dat[[tvar]])) # exclude never-treated units
 
@@ -442,7 +443,7 @@ ecic = function(
 
         # compute the QTE
         quant_temp = data.frame(
-          perc = myProbs,
+          perc   = myProbs,
           values = y1_quant$values_to_impute - y0_quant$values_to_impute # from CDFs
         )
         return(quant_temp)
@@ -458,10 +459,10 @@ ecic = function(
 
     # save to disk (saver, but maybe slower
     if (save_to_temp == TRUE) {
-      tmp_quant = tempfile(paste0(pattern = "myQuant", j, "_"), fileext = ".rds", tmpdir = temp_dir)
-      tmp_name  = tempfile(paste0(pattern = "name_runs", j, "_"), fileext = ".rds", tmpdir = temp_dir)
-      
-      saveRDS(dat, file = tmp_quant)
+      tmp_quant = tempfile(paste0(pattern = "myQuant_", random_num, "_", j, "_"), fileext = ".rds")
+      tmp_name  = tempfile(paste0(pattern = "name_runs_", random_num, "_", j, "_"), fileext = ".rds")
+    
+      saveRDS(myQuant, file = tmp_quant)
       saveRDS(name_runs, file = tmp_name)
       return(j)
     }
@@ -475,21 +476,24 @@ ecic = function(
     }
     },
   .options = furrr::furrr_options(seed = 123)
-  )
     )
+  )
   }
   reg = progressr::with_progress(my_fcn(1:nReps))
     
   ##############################################################################
   # post-loop: combine the outputs files 
   if(save_to_temp == TRUE) {
+    list_files = list.files(path = tempdir(), pattern = paste0("myQuant_", random_num))
+
     reg = lapply(1:nReps, function(j){
       list(
-        coefs     =   lapply(list.files( 
-          path = temp_dir, pattern = paste0("myQuant", j, ""), full.names = TRUE ), readRDS)[[1]],
-        name_runs =   lapply(list.files( 
-          path = temp_dir, pattern = paste0("name_runs", j, ""), full.names = TRUE ), readRDS)[[1]]
-      )})
+        coefs     =   readRDS(paste0(tempdir(), "\\", list.files( 
+          path = tempdir(), pattern = paste0("myQuant_", random_num, "_", j, "_")))),
+        name_runs =   readRDS(paste0(tempdir(), "\\", list.files( 
+          path = tempdir(), pattern = paste0("name_runs_", random_num, "_", j, "_"))))
+      )
+    })
   }
 
   # post-loop: Overload class and new attributes (for post-estimation) ----
