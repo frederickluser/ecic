@@ -1,6 +1,5 @@
 
-<a href="https://frederickluser.github.io/ecic/"><img src="man/figures/logo.png" align="right" height="120" /></a>
-# Extended Changes-in-Changes (ECIC)     
+# Extended Changes-in-Changes (ECIC) <a href="https://frederickluser.github.io/ecic/"><img src="man/figures/logo.png" align="right" height="120" /></a>
 [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
