@@ -1,6 +1,7 @@
 ##' @title Estimate a changes-in-changes model with multiple periods and cohorts
 ##' 
-##' @description Calculates a changes-in-changes model as in Athey and Imbens (2006) for multiple periods and cohorts.
+##' @description Calculates a changes-in-changes model as in Athey and Imbens (2006) 
+##' for multiple periods and cohorts.
 ##' 
 ##' @param yvar Dependent variable.
 ##' @param gvar Group variable. Can be either a string (e.g., "first_treated") 
@@ -21,7 +22,8 @@
 ##' @param weight_n1 Weight for the aggregation of the CDFs in the treatment group. 
 ##' `n1` uses cohort sizes (Alternative: `n0`).
 ##' @param quant_algo Quantile algorithm (see Wikipedia for definitions).
-##' @param es Event Study (Logical). If TRUE, a quantile treatment effect is estimated for each period.
+##' @param es Event Study (Logical). If TRUE, a quantile treatment effect is estimated 
+##' for each period.
 ##' @param n_digits Rounding the dependent variable before aggregating the empirical CDFs 
 ##' reduces the size of the imputation grid. This can significantly reduce the amount 
 ##' of RAM used in large data sets.
@@ -30,6 +32,8 @@
 ##' @param save_to_temp Logical. If TRUE, results are temporarily saved, reduces the
 ##' RAM needed.
 ##' @param print_details Logical. If TRUE, settings are printed as a check at the beginning.
+##' @param progress_bar Whether progress bar should be printed (select "void" for no
+##' progress bar or "cli" for another type of bar).
 ##' @param nCores Number of cores used.
 ##' @return An `ecic` object.
 ##' @references 
@@ -39,7 +43,7 @@
 ##' @examples 
 ##' # Example 1. Using the small mpdta data in the did package
 ##' data(dat, package = "ecic")
-##' dat = dat[dat$first.treat <= 1983 & dat$countyreal <= 1000,] # small data for fast running time
+##' dat = dat[dat$first.treat <= 1983 & dat$countyreal <= 1000,] # small data for fast run
 ##' 
 ##' mod_res = 
 ##'   summary(
@@ -117,23 +121,25 @@ ecic = function(
                 quant_algo = 1, 
                 es = FALSE, 
                 n_digits = NULL,
-                periods_es = 6, 
+                periods_es = NULL, 
                 short_output = TRUE, 
                 save_to_temp = FALSE, 
                 print_details = FALSE,
+                progress_bar = c("progress", "void", "cli"),
                 nCores = 1
 )
 {
   #-----------------------------------------------------------------------------
-  # Setup
-  boot      = match.arg(boot)
-  weight_n0 = match.arg(weight_n0)
-  weight_n1 = match.arg(weight_n1)
-  treat     = NULL
+  # Check Input Arguments
+  boot            = match.arg(boot)
+  weight_n0       = match.arg(weight_n0)
+  weight_n1       = match.arg(weight_n1)
+  treat           = NULL
+  progress_bar    = match.arg(progress_bar)
   
   if (is.null(dat)) stop("A non-NULL `dat` argument is required.")
   
-  # Clean Inputs
+  # Prepare String Inputs for Variables
   nl = as.list(seq_along(dat))
   names(nl) = names(dat)
   yvar = eval(substitute(yvar), nl, parent.frame())
@@ -145,15 +151,25 @@ ecic = function(
   ivar = eval(substitute(ivar), nl, parent.frame())
   if (is.numeric(ivar)) ivar = names(dat)[ivar]
   
-  # Check inputs
-  if (is.null(gvar))   stop("A non-NULL `gvar` argument is required.")
-  if (is.null(tvar))   stop("A non-NULL `tvar` argument is required.")
-  if (is.null(ivar))   stop("A non-NULL `ivar` argument is required.")
-  if (is.null(yvar))   stop("A non-NULL `yvar` argument is required.")
-  if (!is.logical(es)) stop("`es` must be logical.")
-  if (!is.logical(short_output)) stop("`short_output` must be logical.")
-  if (!is.logical(save_to_temp)) stop("`save_to_temp` must be logical.")
-  if (!quant_algo %in% 1:9)      stop("Invalid quantile algorithm.")
+  # Check Validity of inputs
+  if (is.null(gvar))              stop("A non-NULL `gvar` argument is required.")
+  if (is.null(tvar))              stop("A non-NULL `tvar` argument is required.")
+  if (is.null(ivar))              stop("A non-NULL `ivar` argument is required.")
+  if (is.null(yvar))              stop("A non-NULL `yvar` argument is required.")
+  if (!tvar %in% names(dat))      stop(paste0("`", tvar, "` is not a variable in the data set."))
+  if (!gvar %in% names(dat))      stop(paste0("`", gvar, "` is not a variable in the data set."))
+  if (!ivar %in% names(dat))      stop(paste0("`", ivar, "` is not a variable in the data set."))
+  if (!yvar %in% names(dat))      stop(paste0("`", yvar, "` is not a variable in the data set."))
+  if (!is.logical(es))            stop("`es` must be logical.")
+  if (!is.logical(short_output))  stop("`short_output` must be logical.")
+  if (!is.logical(save_to_temp))  stop("`save_to_temp` must be logical.")
+  if (!is.logical(print_details)) stop("`print_details` must be logical.")
+  if (!quant_algo %in% 1:9)       stop("Invalid quantile algorithm.")
+  if (!is.numeric(nMin))          stop("`nMin` must be numerical.")
+  if (!is.numeric(nReps))         stop("`nReps` must be numerical.")
+  if (!is.numeric(nCores))        stop("`nCores` must be numerical.")
+  if (!is.numeric(myProbs))       stop("`myProbs` must be numerical.")
+  if (!is.null(n_digits)) if (!is.numeric(n_digits)) stop("`n_digits` must be numerical.")
   
   # Check bootstrap
   if (boot == "no") boot = NULL
@@ -167,50 +183,65 @@ ecic = function(
   if (save_to_temp == TRUE) temp_dir = tempdir()
   
   #-----------------------------------------------------------------------------
-  # setup tvar and gvar
+  # Prepare the data
   dat = subset(dat, get(gvar) %in% unique(dat[[tvar]])) # exclude never-treated units
 
+  # star tvar and gvar at zero
   first_period = min(dat[[tvar]], na.rm = TRUE)
   last_cohort  = max(dat[[gvar]], na.rm = TRUE) - first_period
 
-  dat[[tvar]]  = dat[[tvar]]-(first_period-1) # start tvar at 1
-  dat[[gvar]]  = dat[[gvar]]-(first_period-1) # start gvar at 1
+  dat[[tvar]]  = dat[[tvar]]-(first_period-1) 
+  dat[[gvar]]  = dat[[gvar]]-(first_period-1) 
   
-  list_periods = sort(unique(dat[[tvar]])) # list of all periods
-  list_cohorts = sort(unique(dat[[gvar]])) # list of all cohorts
+  # calculate group / cohort sizes
+  group_sizes = stats::aggregate(stats::as.formula(paste(". ~ ", gvar)), 
+                                 data = dat[!duplicated(dat[, ivar]), ], FUN = length)[c(gvar, yvar)]
+  names(group_sizes)[names(group_sizes) == yvar] = "N"
+  
+  # check number of too small groups / cohorts and exclude them
+  diffGroup = sum(group_sizes$N < nMin)
+  if (diffGroup != 0)  {
+    skip_cohorts = group_sizes[group_sizes$N < nMin, gvar] # find the small cohorts
+    dat = dat[!dat[[gvar]] %in% skip_cohorts, ] # delete too small cohorts
+    warning(paste0("You have ", diffGroup, " (", round(100 * diffGroup / nrow(group_sizes)), 
+                   "%) too small groups (less than ", nMin, " observations). They were dropped."))
+  }
+  if (diffGroup == nrow(group_sizes)) stop("All treated cohorts are too small (you can adjust `nMin` with caution).")
+  
+  # identify the treatment cohorts
+  list_periods = sort(unique(dat[[tvar]]))
+  list_cohorts = sort(unique(dat[[gvar]]))
   
   qte_cohort   = list_cohorts[-length(list_cohorts)] # omit last g (no comparison group)
   qte_cohort   = qte_cohort[qte_cohort != 1] # omit first g (no pre-period)
   if(length(qte_cohort) == 0) stop("Not enough cohorts / groups in the data set!")
   
+  # Print settings
+  if (print_details == TRUE & is.null(boot)) {
+    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, 
+                   " groups and ", nrow(dat), " observations. No standard errors computed."))
+  } else if (print_details == TRUE & !is.null(boot)) {
+    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, 
+                   " groups and ", nrow(dat), " observations with ", nReps, " (", boot, ") bootstrap replications."))
+  }
+  
   # max event time QTEs can be calculated for
   periods_es = length(
     list_periods[which(list_periods == qte_cohort[1]):(length(list_periods)-1)]
-    ) - 1
-  
-  # Print settings
-  if (print_details == TRUE & is.null(boot)) {
-    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations. No standard errors computed."))
-  } else if (print_details == TRUE & !is.null(boot)) {
-    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, " groups and ", nrow(dat), " observations with ", nReps, " (", boot, ") bootstrap replications."))
-  }
-  
-  # calculate group sizes
-  group_sizes = stats::aggregate(stats::as.formula(paste(". ~ ", gvar)), data = dat[!duplicated(dat[, ivar]), ], FUN = length)[c(gvar, yvar)]
-  names(group_sizes)[names(group_sizes) == yvar] = "N"
-  
-  # check number of too small groups
-  diffGroup = sum(group_sizes$N <= nMin)
-  if (diffGroup != 0) warning(paste0("You have ", diffGroup, " (", round(100 * diffGroup / nrow(group_sizes)), "%) too small groups (less than ", nMin, " observations). They will be dropped."))
-  if (diffGroup == nrow(group_sizes)) stop("All treated cohorts are too small (you can adjust `nMin` with caution).")
+  ) - 1
   
   ################################################################################
   # Calculate all 2-by-2 CIC combinations
   
   future::plan(future::multisession, workers = nCores, gc = TRUE)
+  progressr::handlers(progress_bar) # choose whether to print output
   
   # Calculate bootstrap for all possible 2x2 combinations
-  res = furrr::future_map(1:nReps, function(j) {
+
+  my_fcn <- function(xs) {
+    p <- progressr::progressor(along = xs)
+    return(
+    furrr::future_map(xs, function(j) {
 
     n1 = n0 = vector()
     y1 = y0 = name_runs = vector("list")
@@ -218,7 +249,8 @@ ecic = function(
     # resampling for bootstrapping
       if (!is.null(boot)) {
         if (boot == "weighted") {
-          cell_sizes = stats::aggregate(stats::as.formula(paste(". ~ ", gvar, "+", tvar)), data = dat, FUN = length)[c(gvar, tvar, yvar)] # count cohort-period combinations
+          cell_sizes = stats::aggregate(stats::as.formula(paste(". ~ ", gvar, "+", tvar)), 
+                                        data = dat, FUN = length)[c(gvar, tvar, yvar)] # count cohort-period cells
           names(cell_sizes)[names(cell_sizes) == yvar] = "N"
           dat = merge(dat, cell_sizes, all.x = TRUE)
           data_boot = dat[sample(1:nrow(dat), size = nrow(dat), replace = TRUE, prob = dat$N), ]
@@ -236,7 +268,7 @@ ecic = function(
     for (qteCohort in qte_cohort) {
 
       # 2) comparison groups ----
-      pre_cohort = list_cohorts[(which(list_cohorts == qteCohort)+1):list_cohorts[length(list_cohorts)]]
+      pre_cohort = list_cohorts[(which(list_cohorts == qteCohort)+1):length(list_cohorts)]
       
       for (preCohort in pre_cohort) {
       
@@ -262,6 +294,15 @@ ecic = function(
             nrow_treat = nrow(subset(data_loop, treat == 1))
             nrow_control = nrow(subset(data_loop, treat == 0))
             
+            # save the combinations (cohort / year) of this run
+            name_runs[[i]] = data.frame(i, qteCohort, preCohort, qteYear, preYear)
+            
+            # save the group sizes for the weighting
+            n1[i] = nrow_treat
+            n0[i] = nrow_control
+
+            #-------------------------------------------------------------------
+            # catch empty groups
             if (nrow_treat < nMin){
               warning(paste0("Skipped a period-cohort group in bootstrap run ", j, " (too small treatment group)"))
               next
@@ -270,14 +311,6 @@ ecic = function(
               warning(paste0("Skipped a period-cohort group in bootstrap run ", j, " (too small treatment group)"))
               next
             }            
-            
-            #-------------------------------------------------------------------
-            # save the combinations (cohort / year) of this run
-            name_runs[[i]] = data.frame(i, qteCohort, preCohort, qteYear, preYear)
-            
-            # save the group sizes for the weighting
-            n1[i] = nrow_treat
-            n0[i] = nrow_control
             
             #-------------------------------------------------------------------
             # Y(1)
@@ -291,7 +324,6 @@ ecic = function(
                      ), type = quant_algo
                      )
               )
-            
             #-------------------------------------------------------------------
             i = i + 1 # update counter
           }
@@ -304,6 +336,11 @@ ecic = function(
     # collapse
     name_runs = cbind(do.call(rbind, name_runs), n1, n0) # specifications of the runs
 
+    # check that not all runs were empty 
+    if (nrow(name_runs[name_runs$n1 >= nMin & name_runs$n0 >= nMin,]) == 0 ) {
+      stop("There was no non-empty cohort-group combination (all combinations were too small, check \"nMin\").", call. = F)
+    }
+    
     # prepare imputation values
     if (!is.null(n_digits)) {
       values_to_impute = sort(unique( round( dat[[yvar]], digits = n_digits)) )
@@ -381,7 +418,8 @@ ecic = function(
 
       if (periods_es > max_es) {
         periods_es = max_es
-        warning(paste0("Bootstrap run ", j, ": Only ", periods_es, " post-treatment periods can be calculated (plus contemporaneous)."))
+        warning(paste0("Bootstrap run ", j, ": Only ", periods_es, 
+                       " post-treatment periods can be calculated (plus contemporaneous)."))
       }
 
       myQuant = lapply(0:periods_es, function(e) { # time-after-treat
@@ -415,7 +453,10 @@ ecic = function(
     }
     
     #---------------------------------------------------------------------------
-    # save to disk (saver, but maybe slower)
+    # update progress bar
+    p() 
+
+    # save to disk (saver, but maybe slower
     if (save_to_temp == TRUE) {
       tmp_quant = tempfile(paste0(pattern = "myQuant", j, "_"), fileext = ".rds", tmpdir = temp_dir)
       tmp_name  = tempfile(paste0(pattern = "name_runs", j, "_"), fileext = ".rds", tmpdir = temp_dir)
@@ -432,33 +473,39 @@ ecic = function(
     if ((short_output == FALSE & save_to_temp == FALSE)) {
       return(list(coefs = myQuant, n1 = n1, n0 = n0, name_runs = name_runs, y1 = y1, y0 = y0))
     }
-  },
-  .options = furrr::furrr_options(seed = 123), .progress = TRUE
+    },
+  .options = furrr::furrr_options(seed = 123)
   )
-
+    )
+  }
+  reg = progressr::with_progress(my_fcn(1:nReps))
+    
   ##############################################################################
   # post-loop: combine the outputs files 
-  if(save_to_temp == TRUE){
-    res = lapply(1:nReps, function(j){
+  if(save_to_temp == TRUE) {
+    reg = lapply(1:nReps, function(j){
       list(
-        coefs     =   lapply(list.files( path = temp_dir, pattern = paste0("myQuant", j, ""), full.names = TRUE ), readRDS)[[1]],
-        name_runs =   lapply(list.files( path = temp_dir, pattern = paste0("name_runs", j, ""), full.names = TRUE ), readRDS)[[1]]
+        coefs     =   lapply(list.files( 
+          path = temp_dir, pattern = paste0("myQuant", j, ""), full.names = TRUE ), readRDS)[[1]],
+        name_runs =   lapply(list.files( 
+          path = temp_dir, pattern = paste0("name_runs", j, ""), full.names = TRUE ), readRDS)[[1]]
       )})
   }
 
   # post-loop: Overload class and new attributes (for post-estimation) ----
   if(es == TRUE) {
-    periods_es = max(lengths(lapply(res, "[[", 1))-1) # substact contemporary
+    periods_es = max(lengths(lapply(reg, "[[", 1))-1) # substact contemporary
   } else {
     periods_es = NA
   }
   
-  class(res) = c("ecic", class(res))
-  attr(res, "ecic") = list(
+  class(reg) = c("ecic")
+  #class(reg) = c("ecic", class(reg))
+  attr(reg, "ecic") = list(
     myProbs    = myProbs,
     es         = es,
     periods_es = periods_es
   )
   
-  return(res)
+  return(reg)
 }

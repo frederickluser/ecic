@@ -19,10 +19,11 @@ ecic(
   quant_algo = 1,
   es = FALSE,
   n_digits = NULL,
-  periods_es = 6,
+  periods_es = NULL,
   short_output = TRUE,
   save_to_temp = FALSE,
   print_details = FALSE,
+  progress_bar = c("progress", "void", "cli"),
   nCores = 1
 )
 }
@@ -58,7 +59,8 @@ but might be weighted by period-cohort size ("weighted").}
 
 \item{quant_algo}{Quantile algorithm (see Wikipedia for definitions).}
 
-\item{es}{Event Study (Logical). If TRUE, a quantile treatment effect is estimated for each period.}
+\item{es}{Event Study (Logical). If TRUE, a quantile treatment effect is estimated
+for each period.}
 
 \item{n_digits}{Rounding the dependent variable before aggregating the empirical CDFs
 reduces the size of the imputation grid. This can significantly reduce the amount
@@ -73,18 +75,22 @@ RAM needed.}
 
 \item{print_details}{Logical. If TRUE, settings are printed as a check at the beginning.}
 
+\item{progress_bar}{Whether progress bar should be printed (select "void" for no
+progress bar or "cli" for another type of bar).}
+
 \item{nCores}{Number of cores used.}
 }
 \value{
 An \code{ecic} object.
 }
 \description{
-Calculates a changes-in-changes model as in Athey and Imbens (2006) for multiple periods and cohorts.
+Calculates a changes-in-changes model as in Athey and Imbens (2006)
+for multiple periods and cohorts.
 }
 \examples{
 # Example 1. Using the small mpdta data in the did package
 data(dat, package = "ecic")
-dat = dat[dat$first.treat <= 1983 & dat$countyreal <= 1000,] # small data for fast running time
+dat = dat[dat$first.treat <= 1983 & dat$countyreal <= 1000,] # small data for fast run
 
 mod_res = 
   summary(

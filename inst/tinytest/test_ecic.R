@@ -47,7 +47,7 @@ ecic1_known <- structure(list(list(coefs = structure(list(perc = c(
 ), class = "data.frame", row.names = c(
   NA,
   -35L
-)))), class = c("ecic", "list"), ecic = list(myProbs = c(
+)))), class = c("ecic"), ecic = list(myProbs = c(
   0.1,
   0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
 ), es = FALSE, periods_es = NA))
@@ -97,7 +97,7 @@ ecic7_known <-
   ), class = "data.frame", row.names = c(
     NA,
     -35L
-  )))), class = c("ecic", "list"), ecic = list(myProbs = c(
+  )))), class = c("ecic"), ecic = list(myProbs = c(
     0.1,
     0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
   ), es = FALSE, periods_es = NA))
@@ -146,7 +146,7 @@ ecic8_known <-
   ), class = "data.frame", row.names = c(
     NA,
     -35L
-  )))), class = c("ecic", "list"), ecic = list(myProbs = c(
+  )))), class = c("ecic"), ecic = list(myProbs = c(
     0.1,
     0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
   ), es = FALSE, periods_es = NA))
@@ -347,7 +347,7 @@ es1_known <-
   ), row.names = c(
     NA,
     -35L
-  ), class = "data.frame"))), class = c("ecic", "list"), ecic = list(
+  ), class = "data.frame"))), class = c("ecic"), ecic = list(
     myProbs = c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
     es = TRUE, periods_es = 3
   ))
@@ -433,16 +433,16 @@ summary2_known <-
 # tests ----
 # average
 # results from ecic(.) |> dput()
-ecic1 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat) # ngives o se
-ecic1a <- ecic(yvar = "lemp", gvar = "first.treat", tvar = "year", ivar = "countyreal", dat = dat, boot = NULL) # gives no se
+ecic1 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void") # ngives o se
+ecic1a <- ecic(yvar = "lemp", gvar = "first.treat", tvar = "year", ivar = "countyreal", dat = dat, boot = NULL, progress_bar = "void") # gives no se
 
-expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal)) # error
-expect_error(ecic(yvar = lemp, gvar = first.tat, tvar = year, ivar = countyreal, dat = dat)) # error
-expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, nReps = 0)) # error
-expect_warning(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, nReps = 100)) # warning
-expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, boot = "blaa")) # error
-ecic7 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, boot = "weighted")
-ecic8 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, boot = "normal")
+expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, progress_bar = "void")) # error
+expect_error(ecic(yvar = lemp, gvar = first.tat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void")) # error
+expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, nReps = 0, progress_bar = "void")) # error
+expect_warning(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, nReps = 100, progress_bar = "void")) # warning
+expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, boot = "blaa", progress_bar = "void")) # error
+ecic7 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, boot = "weighted", progress_bar = "void")
+ecic8 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, boot = "normal", progress_bar = "void")
 
 expect_equal(ecic1, ecic1_known)
 expect_equal(ecic1a, ecic1_known)
@@ -452,7 +452,7 @@ expect_equal(ecic8, ecic8_known)
 # ES
 es1 <- ecic(
   yvar = "lemp", gvar = "first.treat", tvar = "year", ivar = "countyreal", dat = dat,
-  boot = "weighted", nReps = 3, es = T
+  boot = "weighted", nReps = 3, es = T, progress_bar = "void"
 )
 
 expect_equal(es1, es1_known)

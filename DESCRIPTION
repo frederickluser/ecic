@@ -23,6 +23,7 @@ Imports:
     future,
     ggplot2,
     patchwork,
+    progressr,
     stats
 Suggests: 
     tinytest
