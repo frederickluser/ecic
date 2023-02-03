@@ -83,7 +83,13 @@
   </div>
 </nav><div class="container template-home">
 <div class="row">
-  <main id="main" class="col-md-9"><p><a href="https://frederickluser.github.io/ecic/"><img src="reference/figures/logo.png" align="right" height="120"></a> # Extended Changes-in-Changes (ECIC)<br><a href="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></p>
+  <main id="main" class="col-md-9"><div class="section level1">
+<div class="page-header">
+<img src="logo.png" class="logo" alt=""><h1 id="extended-changes-in-changes-ecic-">Extended Changes-in-Changes (ECIC) 
+<a class="anchor" aria-label="anchor" href="#extended-changes-in-changes-ecic-"></a>
+</h1>
+</div>
+<p><a href="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></p>
 <p><code>ecic</code> estimates a changes-in-changes model with multiple periods and cohorts as suggested in Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>). Changes-in-changes is a generalization of the difference-in-differences approach, estimating a treatment effect for the entire distribution instead of averages.</p>
 <p>Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>). show how to extend the model to multiple periods and cohorts, analogously to a Two-Way Fixed-Effects model for averages. This package implements this, calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.</p>
 <div class="section level2">
@@ -243,7 +249,7 @@
 <p>I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span> <code>nRep</code> times (default <code>nReps = 100</code>). This part can be parallelized by setting <code>nCores &gt; 1</code>.</p>
 </div>
 </div>
-
+</div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
