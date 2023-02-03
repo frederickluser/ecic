@@ -1,10 +1,7 @@
 
-# Extended Changes-in-Changes (ECIC)
-# ecic <a href="https://frederickluser.github.io/ecic/"><img src="man/figures/logo.png" align="right" height="120" /></a>
+# Extended Changes-in-Changes (ECIC) <a href="https://frederickluser.github.io/ecic/"><img src="man/figures/logo.png" align="right" alt="" width = 155 /></a>
 
- <!-- badges: start -->
-   [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
- <!-- badges: end -->
+[![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
 cohorts as suggested in Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
