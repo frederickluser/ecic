@@ -53,14 +53,14 @@ ecic_plot = function(object,
       object, 
       ggplot2::aes(x = perc, y = coefs)
       ) +
-      ggplot2::geom_ribbon(ggplot2::aes(ymin = coefs - 1.96 * se, ymax = coefs + 1.96 * se), alpha = .15) +
-      ggplot2::geom_line(linetype = "dashed", color = "grey50") +
-      ggplot2::geom_point(size = size) +
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = coefs - 1.96 * se, ymax = coefs + 1.96 * se), alpha = .2, fill = "deepskyblue2") +
+      ggplot2::geom_line(linetype = "dotted", linewidth = 1.1, alpha = .8, color = "darkslateblue") +
+      ggplot2::geom_point(size = size, color = "darkslateblue") +
       ggplot2::coord_cartesian(ylim) +
       ggplot2::theme_minimal() +
       ggplot2::xlab(xlab) +
       ggplot2::ylab(ylab)
-    
+      
     if (zero_line == TRUE) p = p + ggplot2::geom_hline(yintercept = 0, col = "grey60")
     return(p)
     
