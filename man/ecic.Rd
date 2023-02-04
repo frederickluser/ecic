@@ -23,7 +23,7 @@ ecic(
   short_output = TRUE,
   save_to_temp = FALSE,
   print_details = FALSE,
-  progress_bar = c("progress", "void", "cli"),
+  progress_bar = c("void", "progress", "cli"),
   nCores = 1
 )
 }
@@ -102,7 +102,7 @@ mod_res =
     dat   = dat,          # dataset
     boot  = "normal",     # bootstrap proceduce ("no", "normal", or "weighted")
     nReps = 3,            # number of bootstrap runs
-    progress_bar = "cli" # no progress bar
+    progress_bar = "void" # no progress bar
     )
     )
 
