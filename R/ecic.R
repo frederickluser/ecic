@@ -128,7 +128,7 @@ ecic = function(
                 short_output = TRUE, 
                 save_to_temp = FALSE, 
                 print_details = FALSE,
-                progress_bar = c("progress", "void", "cli"),
+                progress_bar = c("void", "progress", "cli"),
                 nCores = 1
 )
 {

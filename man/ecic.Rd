@@ -102,7 +102,7 @@ mod_res =
     dat   = dat,          # dataset
     boot  = "normal",     # bootstrap proceduce ("no", "normal", or "weighted")
     nReps = 3,            # number of bootstrap runs
-    progress_bar = "void" # no progress bar
+    progress_bar = "cli" # no progress bar
     )
     )
 
