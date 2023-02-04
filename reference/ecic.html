@@ -198,16 +198,16 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-in"><span>    gvar  <span class="op">=</span> <span class="va">first.treat</span>,  <span class="co"># group indicator</span></span></span>
 <span class="r-in"><span>    tvar  <span class="op">=</span> <span class="va">year</span>,         <span class="co"># time indicator</span></span></span>
 <span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
-<span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,        <span class="co"># dataset</span></span></span>
+<span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,          <span class="co"># dataset</span></span></span>
 <span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"normal"</span>,     <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
-<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">3</span>             <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">3</span>,            <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>    progress_bar <span class="op">=</span> <span class="st">"void"</span> <span class="co"># no progress bar</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘progress’</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Basic Plot</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ecic_plot(mod_res):</span> object 'mod_res' not found</span>
+<span class="r-plt img"><img src="ecic-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Example 2. Load some larger sample data</span></span></span>
@@ -223,14 +223,14 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
 <span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,          <span class="co"># dataset</span></span></span>
 <span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"weighted"</span>,   <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
-<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>            <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>,           <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>    progress_bar <span class="op">=</span> <span class="st">"void"</span> <span class="co"># no progress bar</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘progress’</span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># Basic Plot</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ecic_plot(mod_res):</span> object 'mod_res' not found</span>
+<span class="r-plt img"><img src="ecic-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Example 3. An Event-Study Example</span></span></span>
 <span class="r-in"><span><span class="va">mod_res</span> <span class="op">=</span></span></span>
@@ -243,18 +243,38 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
 <span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,          <span class="co"># dataset</span></span></span>
 <span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"weighted"</span>,   <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
-<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>            <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>,           <span class="co"># number of bootstrap runs</span></span></span>
+<span class="r-in"><span>    progress_bar <span class="op">=</span> <span class="st">"void"</span> <span class="co"># no progress bar</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in loadNamespace(x):</span> there is no package called ‘progress’</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 1: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 2: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 3: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 4: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 5: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 6: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 7: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 8: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 9: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 10: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 11: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 12: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 13: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 14: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 15: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 16: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 17: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 18: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 19: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bootstrap run 20: Only 1 post-treatment periods can be calculated (plus contemporaneous).</span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co"># Plots</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span> <span class="co"># aggregated in one plot</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ecic_plot(mod_res):</span> object 'mod_res' not found</span>
+<span class="r-plt img"><img src="ecic-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span>, es_type <span class="op">=</span> <span class="st">"for_quantiles"</span><span class="op">)</span> <span class="co"># individually for every quantile</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ecic_plot(mod_res, es_type = "for_quantiles"):</span> object 'mod_res' not found</span>
+<span class="r-plt img"><img src="ecic-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span>, es_type <span class="op">=</span> <span class="st">"for_periods"</span><span class="op">)</span> <span class="co"># individually for every period</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ecic_plot(mod_res, es_type = "for_periods"):</span> object 'mod_res' not found</span>
+<span class="r-plt img"><img src="ecic-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
