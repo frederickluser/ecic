@@ -99,9 +99,10 @@ mod_res =
     gvar  = first.treat,  # group indicator
     tvar  = year,         # time indicator
     ivar  = countyreal,   # unit ID
-    dat   = dat,        # dataset
+    dat   = dat,          # dataset
     boot  = "normal",     # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 3             # number of bootstrap runs
+    nReps = 3,            # number of bootstrap runs
+    progress_bar = "void" # no progress bar
     )
     )
 
@@ -122,7 +123,8 @@ mod_res =
     ivar  = countyreal,   # unit ID
     dat   = dat,          # dataset
     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 20            # number of bootstrap runs
+    nReps = 20,           # number of bootstrap runs
+    progress_bar = "void" # no progress bar
   )
   )
   
@@ -140,7 +142,8 @@ mod_res =
     ivar  = countyreal,   # unit ID
     dat   = dat,          # dataset
     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 20            # number of bootstrap runs
+    nReps = 20,           # number of bootstrap runs
+    progress_bar = "void" # no progress bar
   )
   )
   
