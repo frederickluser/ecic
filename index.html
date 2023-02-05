@@ -235,7 +235,7 @@
 <div class="section level3">
 <h3 id="estimation-1">Estimation<a class="anchor" aria-label="anchor" href="#estimation-1"></a>
 </h3>
-<p>For every treated cohort, we observe the distribution of the potential outcome <span class="math inline"><em>Y</em>(1)</span>. In the case of two groups / cohorts and two periods, Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>). show how to construct the counterfactual <span class="math inline"><em>Y</em>(0)</span>. This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group.</p>
+<p>For every treated cohort, we observe the distribution of the potential outcome <span class="math inline"><em>Y</em>(1)</span>. In the case of two groups / cohorts and two periods, Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>) show how to construct the counterfactual <span class="math inline"><em>Y</em>(0)</span>. This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group.</p>
 <p>Since we cannot simply average Quantile Treatment Effects, we must first store the empirical CDF of <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span> for every two-by-two case. Note that, therefore, we cannot estimate a quantile treatment effect for units treated in the first (no pre-treatment period) and last period (no comparison cohort) and have to skip small cohorts (default <code>nMin = 40</code>) as we need more observations to estimate quantile treatment effects compared to an average effect.</p>
 </div>
 <div class="section level3">
@@ -246,7 +246,7 @@
 <div class="section level3">
 <h3 id="bootstrap">Bootstrap<a class="anchor" aria-label="anchor" href="#bootstrap"></a>
 </h3>
-<p>I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span> <code>nRep</code> times (default <code>nReps = 100</code>). This part can be parallelized by setting <code>nCores &gt; 1</code>.</p>
+<p>I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span> <code>nRep</code> times (default <code>nReps = 1</code>). This part can be parallelized by setting <code>nCores &gt; 1</code>.</p>
 </div>
 </div>
 </div>
