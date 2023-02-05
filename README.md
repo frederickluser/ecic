@@ -161,7 +161,7 @@ ecic_plot(
 ## Under the hood
 ### Estimation
 For every treated cohort, we observe the distribution of the potential outcome $Y(1)$. 
-In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
+In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models))
 show how to construct the counterfactual $Y(0)$.
 This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group.
 
@@ -172,5 +172,5 @@ Next, I aggregate all estimated CDFs to get the plug-in estimates of $Y(1)$ and 
 Technically, `ecic` generates a grid over the dependent variable and imputes all empirical CDFs.
 
 ### Bootstrap
-I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 100`).
+I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 1`).
 This part can be parallelized by setting `nCores > 1`.
