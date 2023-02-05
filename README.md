@@ -3,6 +3,11 @@
 
 [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
 
+[![CRAN version](https://www.r-pkg.org/badges/version/ecic)](https://CRAN.R-project.org/package=ecic)
+[![CRAN checks](https://badges.cranchecks.info/worst/ecic.svg)](https://cran.r-project.org/web/checks/check_results_ecic.html)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/ecic)](https://cran.r-project.org/package=ecic)
+[![Dependencies](https://tinyverse.netlify.com/badge/ecic)](https://CRAN.R-project.org/package=ecic)
+
 `ecic` estimates a changes-in-changes model with multiple periods and 
 cohorts as suggested in Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
 Changes-in-changes is a generalization of the difference-in-differences approach, estimating
