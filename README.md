@@ -2,7 +2,6 @@
 # Extended Changes-in-Changes (ECIC) <a href="https://frederickluser.github.io/ecic/"><img src="man/figures/logo.png" align="right" alt="" width = 155 /></a>
 
 [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
-
 [![CRAN version](https://www.r-pkg.org/badges/version/ecic)](https://CRAN.R-project.org/package=ecic)
 [![CRAN checks](https://badges.cranchecks.info/worst/ecic.svg)](https://cran.r-project.org/web/checks/check_results_ecic.html)
 [![CRAN downloads](https://cranlogs.r-pkg.org/badges/ecic)](https://cran.r-project.org/package=ecic)
