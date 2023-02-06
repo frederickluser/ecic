@@ -169,7 +169,7 @@ ecic_plot(
 </p>
 
 ## Next Steps
-[ ] Add covariates
+- [ ] Add covariates
 
 ## Under the hood
 ### Estimation
