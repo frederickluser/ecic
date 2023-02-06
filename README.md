@@ -4,7 +4,7 @@
 [![R-CMD-check](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml)
 [![CRAN version](https://www.r-pkg.org/badges/version/ecic)](https://CRAN.R-project.org/package=ecic)
 [![CRAN checks](https://badges.cranchecks.info/worst/ecic.svg)](https://cran.r-project.org/web/checks/check_results_ecic.html)
-[![CRAN downloads](https://cranlogs.r-pkg.org/badges/ecic)](https://cran.r-project.org/package=ecic)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/ecic)](https://cran.r-project.org/package=ecic)
 [![Dependencies](https://tinyverse.netlify.com/badge/ecic)](https://CRAN.R-project.org/package=ecic)
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
@@ -13,15 +13,19 @@ Changes-in-changes is a generalization of the difference-in-differences approach
 a treatment effect for the entire distribution instead of averages.
 
 Athey and Imbens
-([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
+([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models))
 show how to extend the model to multiple periods and cohorts, analogously to a Two-Way Fixed-Effects model for averages.
 This package implements this, 
 calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.
 
 ## Installation
 
-You can install `ecic` from GitHub.
+`ecic`is available on [CRAN](https://cran.r-project.org/web/packages/ecic/index.html) using:
+``` r
+install.packages("ecic")
+```
 
+You can install the newest version from GitHub:
 ``` r
 # install.packages("remotes")
 remotes::install_github("frederickluser/ecic")
@@ -60,8 +64,8 @@ mod =
     nReps = 10            # number of bootstrap runs
     )
 ```
-`mod`contains for every bootstrap run a list of all 2-by-2 combinations (`$name_runs`) and the point-estimates.
-`summary` combines this and adds standard errors:
+`mod`contains for every bootstrap run a list of all 2-by-2 combinations (`$name_runs`) and the point-estimates (`$coefs`).
+`summary` then combines all bootstrap runs to a quantile treatment effect and adds standard errors:
 
 ``` r
 mod_res = summary(mod) 
@@ -173,7 +177,7 @@ Since we cannot simply average Quantile Treatment Effects, we must first store t
 
 ### Aggregation
 Next, I aggregate all estimated CDFs to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes.
-Technically, `ecic` generates a grid over the dependent variable and imputes all empirical CDFs.
+Technically, `ecic` generates a grid over the dependent variable and imputes all empirical CDFs. You can speed up the imputation by rounding the dependent variable to `n_digits`.
 
 ### Bootstrap
 I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 1`).
