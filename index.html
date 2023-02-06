@@ -89,14 +89,17 @@
 <a class="anchor" aria-label="anchor" href="#extended-changes-in-changes-ecic-"></a>
 </h1>
 </div>
-<p><a href="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://CRAN.R-project.org/package=ecic" class="external-link"><img src="https://www.r-pkg.org/badges/version/ecic" alt="CRAN version"></a> <a href="https://cran.r-project.org/web/checks/check_results_ecic.html" class="external-link"><img src="https://badges.cranchecks.info/worst/ecic.svg" alt="CRAN checks"></a> <a href="https://cran.r-project.org/package=ecic" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/ecic" alt="CRAN downloads"></a> <a href="https://CRAN.R-project.org/package=ecic" class="external-link"><img src="https://tinyverse.netlify.com/badge/ecic" alt="Dependencies"></a></p>
+<p><a href="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/frederickluser/ecic/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://CRAN.R-project.org/package=ecic" class="external-link"><img src="https://www.r-pkg.org/badges/version/ecic" alt="CRAN version"></a> <a href="https://cran.r-project.org/web/checks/check_results_ecic.html" class="external-link"><img src="https://badges.cranchecks.info/worst/ecic.svg" alt="CRAN checks"></a> <a href="https://cran.r-project.org/package=ecic" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/ecic" alt="CRAN downloads"></a> <a href="https://CRAN.R-project.org/package=ecic" class="external-link"><img src="https://tinyverse.netlify.com/badge/ecic" alt="Dependencies"></a></p>
 <p><code>ecic</code> estimates a changes-in-changes model with multiple periods and cohorts as suggested in Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>). Changes-in-changes is a generalization of the difference-in-differences approach, estimating a treatment effect for the entire distribution instead of averages.</p>
-<p>Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>). show how to extend the model to multiple periods and cohorts, analogously to a Two-Way Fixed-Effects model for averages. This package implements this, calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.</p>
+<p>Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>) show how to extend the model to multiple periods and cohorts, analogously to a Two-Way Fixed-Effects model for averages. This package implements this, calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install <code>ecic</code> from GitHub.</p>
+<p><code>ecic</code>is available on <a href="https://cran.r-project.org/web/packages/ecic/index.html" class="external-link">CRAN</a> using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ecic"</span><span class="op">)</span></span></code></pre></div>
+<p>You can install the newest version from GitHub:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("remotes")</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"frederickluser/ecic"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -107,7 +110,7 @@
 <h3 id="estimation">Estimation<a class="anchor" aria-label="anchor" href="#estimation"></a>
 </h3>
 <p>Let’s look at a short example how to use the package. First, load some simulated sample data.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://frederickluser.github.io/ecic/">ecic</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dat</span>, package <span class="op">=</span> <span class="st">"ecic"</span><span class="op">)</span></span>
 <span></span>
@@ -121,7 +124,7 @@
 <span><span class="co">#&gt;           5        1980    1981             1   3.88</span></span>
 <span><span class="co">#&gt;           5        1980    1982             2   3.80</span></span></code></pre></div>
 <p>Then, the function <code>ecic</code> estimates the changes-changes-model:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Estimate the model</span></span>
 <span><span class="va">mod</span> <span class="op">=</span></span>
 <span>  <span class="fu"><a href="reference/ecic.html">ecic</a></span><span class="op">(</span></span>
@@ -133,8 +136,8 @@
 <span>    boot  <span class="op">=</span> <span class="st">"weighted"</span>,   <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span>
 <span>    nReps <span class="op">=</span> <span class="fl">10</span>            <span class="co"># number of bootstrap runs</span></span>
 <span>    <span class="op">)</span></span></code></pre></div>
-<p><code>mod</code>contains for every bootstrap run a list of all 2-by-2 combinations (<code>$name_runs</code>) and the point-estimates. <code>summary</code> combines this and adds standard errors:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p><code>mod</code>contains for every bootstrap run a list of all 2-by-2 combinations (<code>$name_runs</code>) and the point-estimates (<code>$coefs</code>). <code>summary</code> then combines all bootstrap runs to a quantile treatment effect and adds standard errors:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">mod_res</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span> </span>
 <span></span>
 <span><span class="co">#&gt; perc    coefs         se</span></span>
@@ -152,7 +155,7 @@
 <h3 id="plotting">Plotting<a class="anchor" aria-label="anchor" href="#plotting"></a>
 </h3>
 <p>Finally, results can be plotted using <code>ecic_plot</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span><span class="op">)</span></span></code></pre></div>
 <p align="center">
 <img src="reference/figures/plot_avg.png" width="100%" style="display: block; margin: auto;"></p>
@@ -162,7 +165,7 @@
 <h2 id="event-study-example">Event-Study Example<a class="anchor" aria-label="anchor" href="#event-study-example"></a>
 </h2>
 <p>The package also allows to report <em>event-study-style</em> results of the effect. To do so, simply add the <code>es = T</code> argument to the estimation and <code>summary</code> will report effects for every event period.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Estimate the model</span></span>
 <span><span class="va">mod</span> <span class="op">=</span></span>
 <span>  <span class="fu"><a href="reference/ecic.html">ecic</a></span><span class="op">(</span></span>
@@ -208,7 +211,7 @@
 <h3 id="plotting-1">Plotting<a class="anchor" aria-label="anchor" href="#plotting-1"></a>
 </h3>
 <p>Event-study results can be plotted for every period individually with the option <code>es_type = "for_periods"</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/ecic_plot.html">ecic_plot</a></span><span class="op">(</span></span>
 <span>    <span class="va">mod_res</span>, </span>
 <span>    periods_plot <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,   <span class="co"># which periods you want to show</span></span>
@@ -218,7 +221,7 @@
 <p align="center">
 <img src="reference/figures/plot_es_period.png" width="100%" style="display: block; margin: auto;"></p>
 <p>Alternatively, <code>es_type = "for_quantiles"</code> generates one plot for every quantile of interest.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/ecic_plot.html">ecic_plot</a></span><span class="op">(</span></span>
 <span>    <span class="va">mod_res</span>, </span>
 <span>    periods_plot <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.1</span>, <span class="fl">.5</span>, <span class="fl">.9</span><span class="op">)</span>, <span class="co"># which quantiles you want to show</span></span>
@@ -241,7 +244,7 @@
 <div class="section level3">
 <h3 id="aggregation">Aggregation<a class="anchor" aria-label="anchor" href="#aggregation"></a>
 </h3>
-<p>Next, I aggregate all estimated CDFs to get the plug-in estimates of <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span>, weighting for the cohort sizes. Technically, <code>ecic</code> generates a grid over the dependent variable and imputes all empirical CDFs.</p>
+<p>Next, I aggregate all estimated CDFs to get the plug-in estimates of <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span>, weighting for the cohort sizes. Technically, <code>ecic</code> generates a grid over the dependent variable and imputes all empirical CDFs. You can speed up the imputation by rounding the dependent variable to <code>n_digits</code>.</p>
 </div>
 <div class="section level3">
 <h3 id="bootstrap">Bootstrap<a class="anchor" aria-label="anchor" href="#bootstrap"></a>
