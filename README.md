@@ -168,6 +168,9 @@ ecic_plot(
  <img src="man/figures/plot_es_decile.png" width="100%" style="display: block; margin: auto;" />
 </p>
 
+## Next Steps
+- [ ] Add covariates
+
 ## Under the hood
 ### Estimation
 For every treated cohort, we observe the distribution of the potential outcome $Y(1)$. 
@@ -184,7 +187,3 @@ Technically, `ecic` generates a grid over the dependent variable and imputes all
 ### Bootstrap
 I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 1`).
 This part can be parallelized by setting `nCores > 1`.
-
-## Next Steps
-- [ ] Add covariates
-- [ ] Allow saving to temporary files in parallel
