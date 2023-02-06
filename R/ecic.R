@@ -179,8 +179,17 @@ ecic = function(
   
   # for saving to disk
   if (save_to_temp == TRUE) {
-    temp_dir = tempdir()
-    random_num = sample(1:1e6, 1)
+    temp_dir   = tempdir() # set same tempdir() across cores in parallel
+    random_num = sample(1e5:5e6, 1) # add a big random number to file names
+    temp_files = list.files( # list all files in temp_dir that have the number
+      temp_dir, pattern = as.character(random_num)
+      )
+    while (length(temp_files)!= 0) { # check that no temp-files contain the number
+      random_num = sample(1e5:5e6, 1)
+      temp_files = list.files( # re-check 
+        temp_dir, pattern = as.character(random_num)
+      )
+    }
   }
 
   #-----------------------------------------------------------------------------
@@ -476,11 +485,10 @@ ecic = function(
   )
   }
   reg = progressr::with_progress(my_fcn(1:nReps))
-    
+  future::plan(future::sequential)
+  
   ##############################################################################
   # post-loop: combine the outputs files 
-  future::plan(sequential)
-  
   if(save_to_temp == TRUE) {
     list_files = list.files(path = temp_dir, pattern = paste0("myQuant_", random_num))
 
@@ -502,7 +510,6 @@ ecic = function(
   }
   
   class(reg) = c("ecic")
-  #class(reg) = c("ecic", class(reg))
   attr(reg, "ecic") = list(
     myProbs    = myProbs,
     es         = es,
