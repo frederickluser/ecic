@@ -12,18 +12,16 @@ ecic(
   dat = NULL,
   myProbs = seq(0.1, 0.9, 0.1),
   nMin = 40,
-  boot = c("no", "normal", "weighted"),
-  nReps = 1,
+  boot = c("normal", "weighted", "no"),
+  nReps = 10,
   weight_n0 = c("n1", "n0"),
   weight_n1 = c("n1", "n0"),
   quant_algo = 1,
   es = FALSE,
   n_digits = NULL,
   periods_es = NULL,
-  short_output = TRUE,
   save_to_temp = FALSE,
-  print_details = FALSE,
-  progress_bar = c("void", "progress", "cli"),
+  progress_bar = c("progress", "cli", "void"),
   nCores = 1
 )
 }
@@ -37,7 +35,7 @@ the group variable typically denotes treatment cohort.}
 \item{tvar}{Time variable. Can be a string (e.g., "year") or an expression
 (e.g., year).}
 
-\item{ivar}{Index variable. Can be a string (e.g., "country") or an
+\item{ivar}{Individual Index variable. Can be a string (e.g., "country") or an
 expression (e.g., country). Only needed to check cohort sizes.}
 
 \item{dat}{The data set.}
@@ -47,7 +45,8 @@ expression (e.g., country). Only needed to check cohort sizes.}
 \item{nMin}{Minimum observations per groups. Small groups are deleted.}
 
 \item{boot}{Bootstrap. Resampling is done over the entire data set ("normal"),
-but might be weighted by period-cohort size ("weighted").}
+but might be weighted by period-cohort size ("weighted"). If you do not want
+to calculate standard error, set boot = "no".}
 
 \item{nReps}{Number of bootstrap replications.}
 
@@ -60,25 +59,22 @@ but might be weighted by period-cohort size ("weighted").}
 \item{quant_algo}{Quantile algorithm (see Wikipedia for definitions).}
 
 \item{es}{Event Study (Logical). If TRUE, a quantile treatment effect is estimated
-for each period.}
+for each event-period.}
 
 \item{n_digits}{Rounding the dependent variable before aggregating the empirical CDFs
 reduces the size of the imputation grid. This can significantly reduce the amount
-of RAM used in large data sets.}
+of RAM used in large data sets and improve running time, while reducing
+precision (Use with caution).}
 
 \item{periods_es}{Periods of the event study.}
 
-\item{short_output}{Only reports essential results.}
-
-\item{save_to_temp}{Logical. If TRUE, results are temporarily saved, reduces the
-RAM needed.}
-
-\item{print_details}{Logical. If TRUE, settings are printed as a check at the beginning.}
+\item{save_to_temp}{Logical. If TRUE, results are temporarily saved. This reduces the
+RAM needed, but increases running time.}
 
 \item{progress_bar}{Whether progress bar should be printed (select "void" for no
 progress bar or "cli" for another type of bar).}
 
-\item{nCores}{Number of cores used.}
+\item{nCores}{Number of cores used. If set > 1, bootstrapping will run in parallel.}
 }
 \value{
 An \code{ecic} object.
@@ -101,8 +97,7 @@ mod_res =
     ivar  = countyreal,   # unit ID
     dat   = dat,          # dataset
     boot  = "normal",     # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 3,            # number of bootstrap runs
-    progress_bar = "void" # no progress bar
+    nReps = 3             # number of bootstrap runs
     )
     )
 
@@ -123,8 +118,7 @@ mod_res =
     ivar  = countyreal,   # unit ID
     dat   = dat,          # dataset
     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 20,           # number of bootstrap runs
-    progress_bar = "void" # no progress bar
+    nReps = 20            # number of bootstrap runs
   )
   )
   
@@ -142,15 +136,14 @@ mod_res =
     ivar  = countyreal,   # unit ID
     dat   = dat,          # dataset
     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-    nReps = 20,           # number of bootstrap runs
-    progress_bar = "void" # no progress bar
+    nReps = 20            # number of bootstrap runs
   )
   )
   
 # Plots
 ecic_plot(mod_res) # aggregated in one plot
 ecic_plot(mod_res, es_type = "for_quantiles") # individually for every quantile
-ecic_plot(mod_res, es_type = "for_periods") # individually for every period
+ecic_plot(mod_res, es_type = "for_periods")   # individually for every period
 }
 }
 \references{

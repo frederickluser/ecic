@@ -105,7 +105,7 @@ ecic_plot = function(object,
                ) +
                ggplot2::geom_ribbon(ggplot2::aes(ymin = coefs - 1.96 * se, ymax = coefs + 1.96 * se), alpha = .2, fill = "deepskyblue2") +
                ggplot2::geom_line(linetype = "dotted", linewidth = 1.1, alpha = .8, color = "darkslateblue") +
-               ggplot2::geom_point(size = 4, color = "darkslateblue") +
+               ggplot2::geom_point(size = size, color = "darkslateblue") +
                ggplot2::theme_minimal() + 
                ggplot2::coord_cartesian(ylim = ylim) +
                ggplot2::xlab(plot_xlab) + 
@@ -142,7 +142,7 @@ ecic_plot = function(object,
                ) +
                ggplot2::geom_ribbon(ggplot2::aes(ymin = coefs - 1.96 * se, ymax = coefs + 1.96 * se), alpha = .2, fill = "deepskyblue2") +
                ggplot2::geom_line(linetype = "dotted", linewidth = 1.1, alpha = .8, color = "darkslateblue") +
-               ggplot2::geom_point(size = 4, color = "darkslateblue") +
+               ggplot2::geom_point(size = size, color = "darkslateblue") +
                ggplot2::theme_minimal() + 
                ggplot2::coord_cartesian(ylim = ylim) +
                ggplot2::xlab(plot_xlab) + 
