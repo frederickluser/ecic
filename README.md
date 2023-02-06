@@ -20,7 +20,7 @@ calculating standard errors via bootstrap and plotting results, aggregated or in
 
 ## Installation
 
-`ecic`is available on [CRAN](https://cran.r-project.org/web/packages/ecic/index.html) using:
+`ecic`is available on [CRAN](https://CRAN.R-project.org/package=ecic) using:
 ``` r
 install.packages("ecic")
 ```

@@ -1475,7 +1475,7 @@ summary2_known <-
 # results from ecic1 |> dput()
 ecic1 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, 
               dat = dat, progress_bar = "void", nReps = 1, boot = "no") # without boot
-ecic1a <- ecic(yvar = "lemp", gvar = "first.treat", tvar = "year", ivar = "countyreal", 
+ecic1a <- ecic(yvar = "lemp", gvar = "first.treat", tvar = "year", ivar = "countyreal", boot = "normal",
                dat = dat, progress_bar = "void", nReps = 5) # with boot
 
 expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, progress_bar = "void")) # error (no dat)
@@ -1483,8 +1483,8 @@ expect_error(ecic(yvar = lemp, gvar = first.tat,   tvar = year, ivar = countyrea
 expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void", nReps = 0)) # error (nreps != boot)
 expect_error(ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void", boot = "blaa")) # error (boot wrong)
 
-ecic7 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void", boot = "weighted")
-ecic8 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void", boot = "normal")
+ecic7 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void", boot = "weighted", nReps = 10)
+ecic8 <- ecic(yvar = lemp, gvar = first.treat, tvar = year, ivar = countyreal, dat = dat, progress_bar = "void", boot = "normal", nReps = 10)
 
 expect_equal(ecic1, ecic1_known)
 expect_equal(ecic1a, ecic1a_known)
