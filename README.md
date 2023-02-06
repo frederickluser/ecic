@@ -25,7 +25,9 @@ calculating standard errors via bootstrap and plotting results, aggregated or in
 install.packages("ecic")
 ```
 
-You can install the newest version from GitHub:
+You can install the newest version from [GitHub](https://github.com/frederickluser/ecic):
+
+
 ``` r
 # install.packages("remotes")
 remotes::install_github("frederickluser/ecic")

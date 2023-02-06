@@ -23,6 +23,7 @@ Imports:
     future,
     ggplot2,
     patchwork,
+    progress,
     progressr,
     stats
 Suggests: 

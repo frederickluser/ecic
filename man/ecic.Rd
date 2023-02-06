@@ -12,8 +12,8 @@ ecic(
   dat = NULL,
   myProbs = seq(0.1, 0.9, 0.1),
   nMin = 40,
-  boot = c("no", "normal", "weighted"),
-  nReps = 1,
+  boot = c("weighted", "normal", "no"),
+  nReps = 10,
   weight_n0 = c("n1", "n0"),
   weight_n1 = c("n1", "n0"),
   quant_algo = 1,
@@ -21,7 +21,7 @@ ecic(
   n_digits = NULL,
   periods_es = NULL,
   save_to_temp = FALSE,
-  progress_bar = c("void", "progress", "cli"),
+  progress_bar = c("progress", "void", "cli"),
   nCores = 1
 )
 }
