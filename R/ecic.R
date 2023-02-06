@@ -178,9 +178,12 @@ ecic = function(
   }
   
   # for saving to disk
-  if (save_to_temp == TRUE) random_num = sample(1:1e6, 1)
+  if (save_to_temp == TRUE) {
+    temp_dir = tempdir()
+    random_num = sample(1:1e6, 1)
+  }
 
-    #-----------------------------------------------------------------------------
+  #-----------------------------------------------------------------------------
   # Prepare the data
   dat = subset(dat, get(gvar) %in% unique(dat[[tvar]])) # exclude never-treated units
 
@@ -456,8 +459,8 @@ ecic = function(
 
     # save to disk (saver, but slower)
     if (save_to_temp == TRUE) {
-      tmp_quant = tempfile(paste0(pattern = "myQuant_", random_num, "_", j, "_"), fileext = ".rds")
-      tmp_name  = tempfile(paste0(pattern = "name_runs_", random_num, "_", j, "_"), fileext = ".rds")
+      tmp_quant = tempfile(paste0(pattern = "myQuant_", random_num, "_", j, "_"), fileext = ".rds", tmpdir = temp_dir)
+      tmp_name  = tempfile(paste0(pattern = "name_runs_", random_num, "_", j, "_"), fileext = ".rds", tmpdir = temp_dir)
     
       saveRDS(myQuant, file = tmp_quant)
       saveRDS(name_runs, file = tmp_name)
@@ -476,15 +479,17 @@ ecic = function(
     
   ##############################################################################
   # post-loop: combine the outputs files 
+  future::plan(sequential)
+  
   if(save_to_temp == TRUE) {
-    list_files = list.files(path = tempdir(), pattern = paste0("myQuant_", random_num))
+    list_files = list.files(path = temp_dir, pattern = paste0("myQuant_", random_num))
 
     reg = lapply(1:nReps, function(j){
       list(
-        coefs     =   readRDS(paste0(tempdir(), "\\", list.files( 
-          path = tempdir(), pattern = paste0("myQuant_", random_num, "_", j, "_")))),
-        name_runs =   readRDS(paste0(tempdir(), "\\", list.files( 
-          path = tempdir(), pattern = paste0("name_runs_", random_num, "_", j, "_"))))
+        coefs     =   readRDS(paste0(temp_dir, "\\", list.files( 
+          path = temp_dir, pattern = paste0("myQuant_", random_num, "_", j, "_")))),
+        name_runs =   readRDS(paste0(temp_dir, "\\", list.files( 
+          path = temp_dir, pattern = paste0("name_runs_", random_num, "_", j, "_"))))
       )
     })
   }
