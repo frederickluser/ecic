@@ -62,18 +62,16 @@ for multiple periods and cohorts.</p>
 <span>  dat <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  myProbs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.9</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
 <span>  nMin <span class="op">=</span> <span class="fl">40</span>,</span>
-<span>  boot <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"no"</span>, <span class="st">"normal"</span>, <span class="st">"weighted"</span><span class="op">)</span>,</span>
-<span>  nReps <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  boot <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"weighted"</span>, <span class="st">"normal"</span>, <span class="st">"no"</span><span class="op">)</span>,</span>
+<span>  nReps <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  weight_n0 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n0"</span><span class="op">)</span>,</span>
 <span>  weight_n1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"n1"</span>, <span class="st">"n0"</span><span class="op">)</span>,</span>
 <span>  quant_algo <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  es <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  n_digits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  periods_es <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  short_output <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  save_to_temp <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  print_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  progress_bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"void"</span>, <span class="st">"progress"</span>, <span class="st">"cli"</span><span class="op">)</span>,</span>
+<span>  progress_bar <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"progress"</span>, <span class="st">"void"</span>, <span class="st">"cli"</span><span class="op">)</span>,</span>
 <span>  nCores <span class="op">=</span> <span class="fl">1</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -96,7 +94,7 @@ the group variable typically denotes treatment cohort.</p></dd>
 
 
 <dt>ivar</dt>
-<dd><p>Index variable. Can be a string (e.g., "country") or an
+<dd><p>Individual Index variable. Can be a string (e.g., "country") or an
 expression (e.g., country). Only needed to check cohort sizes.</p></dd>
 
 
@@ -114,7 +112,8 @@ expression (e.g., country). Only needed to check cohort sizes.</p></dd>
 
 <dt>boot</dt>
 <dd><p>Bootstrap. Resampling is done over the entire data set ("normal"),
-but might be weighted by period-cohort size ("weighted").</p></dd>
+but might be weighted by period-cohort size ("weighted"). If you do not want
+to calculate standard error, set boot = "no".</p></dd>
 
 
 <dt>nReps</dt>
@@ -137,30 +136,23 @@ but might be weighted by period-cohort size ("weighted").</p></dd>
 
 <dt>es</dt>
 <dd><p>Event Study (Logical). If TRUE, a quantile treatment effect is estimated
-for each period.</p></dd>
+for each event-period.</p></dd>
 
 
 <dt>n_digits</dt>
 <dd><p>Rounding the dependent variable before aggregating the empirical CDFs
 reduces the size of the imputation grid. This can significantly reduce the amount
-of RAM used in large data sets.</p></dd>
+of RAM used in large data sets and improve running time, while reducing
+precision (Use with caution).</p></dd>
 
 
 <dt>periods_es</dt>
 <dd><p>Periods of the event study.</p></dd>
 
 
-<dt>short_output</dt>
-<dd><p>Only reports essential results.</p></dd>
-
-
 <dt>save_to_temp</dt>
-<dd><p>Logical. If TRUE, results are temporarily saved, reduces the
-RAM needed.</p></dd>
-
-
-<dt>print_details</dt>
-<dd><p>Logical. If TRUE, settings are printed as a check at the beginning.</p></dd>
+<dd><p>Logical. If TRUE, results are temporarily saved. This reduces the
+RAM needed, but increases running time.</p></dd>
 
 
 <dt>progress_bar</dt>
@@ -169,7 +161,7 @@ progress bar or "cli" for another type of bar).</p></dd>
 
 
 <dt>nCores</dt>
-<dd><p>Number of cores used.</p></dd>
+<dd><p>Number of cores used. If set &gt; 1, bootstrapping will run in parallel.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -200,8 +192,7 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
 <span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,          <span class="co"># dataset</span></span></span>
 <span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"normal"</span>,     <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
-<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">3</span>,            <span class="co"># number of bootstrap runs</span></span></span>
-<span class="r-in"><span>    progress_bar <span class="op">=</span> <span class="st">"void"</span> <span class="co"># no progress bar</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">3</span>             <span class="co"># number of bootstrap runs</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating a changes-in-changes model for 3 groups and 3918 observations with 3 (normal) bootstrap replications.</span>
@@ -224,8 +215,7 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
 <span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,          <span class="co"># dataset</span></span></span>
 <span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"weighted"</span>,   <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
-<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>,           <span class="co"># number of bootstrap runs</span></span></span>
-<span class="r-in"><span>    progress_bar <span class="op">=</span> <span class="st">"void"</span> <span class="co"># no progress bar</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>            <span class="co"># number of bootstrap runs</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating a changes-in-changes model for 3 groups and 3918 observations with 20 (weighted) bootstrap replications.</span>
@@ -245,8 +235,7 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-in"><span>    ivar  <span class="op">=</span> <span class="va">countyreal</span>,   <span class="co"># unit ID</span></span></span>
 <span class="r-in"><span>    dat   <span class="op">=</span> <span class="va">dat</span>,          <span class="co"># dataset</span></span></span>
 <span class="r-in"><span>    boot  <span class="op">=</span> <span class="st">"weighted"</span>,   <span class="co"># bootstrap proceduce ("no", "normal", or "weighted")</span></span></span>
-<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>,           <span class="co"># number of bootstrap runs</span></span></span>
-<span class="r-in"><span>    progress_bar <span class="op">=</span> <span class="st">"void"</span> <span class="co"># no progress bar</span></span></span>
+<span class="r-in"><span>    nReps <span class="op">=</span> <span class="fl">20</span>            <span class="co"># number of bootstrap runs</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimating a changes-in-changes model for 3 groups and 3918 observations with 20 (weighted) bootstrap replications.</span>
@@ -276,7 +265,7 @@ Nonlinear Difference-in-Differences Models</cite>.
 <span class="r-plt img"><img src="ecic-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span>, es_type <span class="op">=</span> <span class="st">"for_quantiles"</span><span class="op">)</span> <span class="co"># individually for every quantile</span></span></span>
 <span class="r-plt img"><img src="ecic-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span>, es_type <span class="op">=</span> <span class="st">"for_periods"</span><span class="op">)</span> <span class="co"># individually for every period</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ecic_plot.html">ecic_plot</a></span><span class="op">(</span><span class="va">mod_res</span>, es_type <span class="op">=</span> <span class="st">"for_periods"</span><span class="op">)</span>   <span class="co"># individually for every period</span></span></span>
 <span class="r-plt img"><img src="ecic-5.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
