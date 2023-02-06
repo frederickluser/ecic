@@ -9,13 +9,14 @@
 ##' the group variable typically denotes treatment cohort.
 ##' @param tvar Time variable. Can be a string (e.g., "year") or an expression
 ##' (e.g., year).
-##' @param ivar Index variable. Can be a string (e.g., "country") or an 
+##' @param ivar Individual Index variable. Can be a string (e.g., "country") or an 
 ##' expression (e.g., country). Only needed to check cohort sizes.
 ##' @param dat The data set.
 ##' @param myProbs Quantiles that the quantile treatment effects should be calculated for.
 ##' @param nMin Minimum observations per groups. Small groups are deleted.
 ##' @param boot Bootstrap. Resampling is done over the entire data set ("normal"), 
-##' but might be weighted by period-cohort size ("weighted"). 
+##' but might be weighted by period-cohort size ("weighted"). If you do not want
+##' to calculate standard error, set boot = "no".
 ##' @param nReps Number of bootstrap replications.
 ##' @param weight_n0 Weight for the aggregation of the CDFs in the control group. 
 ##'  `n1` uses cohort sizes (Alternative: `n0`).
@@ -23,18 +24,17 @@
 ##' `n1` uses cohort sizes (Alternative: `n0`).
 ##' @param quant_algo Quantile algorithm (see Wikipedia for definitions).
 ##' @param es Event Study (Logical). If TRUE, a quantile treatment effect is estimated 
-##' for each period.
+##' for each event-period.
 ##' @param n_digits Rounding the dependent variable before aggregating the empirical CDFs 
 ##' reduces the size of the imputation grid. This can significantly reduce the amount 
-##' of RAM used in large data sets.
+##' of RAM used in large data sets and improve running time, while reducing 
+##' precision (Use with caution).
 ##' @param periods_es Periods of the event study.
-##' @param short_output Only reports essential results.
-##' @param save_to_temp Logical. If TRUE, results are temporarily saved, reduces the
-##' RAM needed.
-##' @param print_details Logical. If TRUE, settings are printed as a check at the beginning.
+##' @param save_to_temp Logical. If TRUE, results are temporarily saved. This reduces the
+##' RAM needed, but increases running time.
 ##' @param progress_bar Whether progress bar should be printed (select "void" for no
 ##' progress bar or "cli" for another type of bar).
-##' @param nCores Number of cores used.
+##' @param nCores Number of cores used. If set > 1, bootstrapping will run in parallel.
 ##' @return An `ecic` object.
 ##' @references 
 ##' Athey, Susan and Guido W. Imbens (2006). \cite{Identification and Inference in 
@@ -54,8 +54,7 @@
 ##'     ivar  = countyreal,   # unit ID
 ##'     dat   = dat,          # dataset
 ##'     boot  = "normal",     # bootstrap proceduce ("no", "normal", or "weighted")
-##'     nReps = 3,            # number of bootstrap runs
-##'     progress_bar = "void" # no progress bar
+##'     nReps = 3             # number of bootstrap runs
 ##'     )
 ##'     )
 ##' 
@@ -76,8 +75,7 @@
 ##'     ivar  = countyreal,   # unit ID
 ##'     dat   = dat,          # dataset
 ##'     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-##'     nReps = 20,           # number of bootstrap runs
-##'     progress_bar = "void" # no progress bar
+##'     nReps = 20            # number of bootstrap runs
 ##'   )
 ##'   )
 ##'   
@@ -95,19 +93,19 @@
 ##'     ivar  = countyreal,   # unit ID
 ##'     dat   = dat,          # dataset
 ##'     boot  = "weighted",   # bootstrap proceduce ("no", "normal", or "weighted")
-##'     nReps = 20,           # number of bootstrap runs
-##'     progress_bar = "void" # no progress bar
+##'     nReps = 20            # number of bootstrap runs
 ##'   )
 ##'   )
 ##'   
 ##' # Plots
 ##' ecic_plot(mod_res) # aggregated in one plot
 ##' ecic_plot(mod_res, es_type = "for_quantiles") # individually for every quantile
-##' ecic_plot(mod_res, es_type = "for_periods") # individually for every period
+##' ecic_plot(mod_res, es_type = "for_periods")   # individually for every period
 ##' }
 ##' @importFrom stats aggregate quantile sd
 ##' @import future
 ##' @import furrr
+##' @import progress
 ##' @export
 ecic = function(
                 yvar = NULL, 
@@ -117,18 +115,16 @@ ecic = function(
                 dat  = NULL, 
                 myProbs = seq(.1, .9, .1),
                 nMin  = 40, 
-                boot  = c("no", "normal", "weighted"),
-                nReps = 1,
+                boot  = c("normal", "weighted", "no"),
+                nReps = 10,
                 weight_n0 = c("n1", "n0"),
                 weight_n1 = c("n1", "n0"),
                 quant_algo = 1, 
                 es = FALSE, 
                 n_digits = NULL,
                 periods_es = NULL, 
-                short_output = TRUE, 
                 save_to_temp = FALSE, 
-                print_details = FALSE,
-                progress_bar = c("void", "progress", "cli"),
+                progress_bar = c("progress", "cli", "void"),
                 nCores = 1
 )
 {
@@ -164,9 +160,7 @@ ecic = function(
   if (!ivar %in% names(dat))      stop(paste0("`", ivar, "` is not a variable in the data set."))
   if (!yvar %in% names(dat))      stop(paste0("`", yvar, "` is not a variable in the data set."))
   if (!is.logical(es))            stop("`es` must be logical.")
-  if (!is.logical(short_output))  stop("`short_output` must be logical.")
   if (!is.logical(save_to_temp))  stop("`save_to_temp` must be logical.")
-  if (!is.logical(print_details)) stop("`print_details` must be logical.")
   if (!quant_algo %in% 1:9)       stop("Invalid quantile algorithm.")
   if (!is.numeric(nMin))          stop("`nMin` must be numerical.")
   if (!is.numeric(nReps))         stop("`nReps` must be numerical.")
@@ -221,11 +215,11 @@ ecic = function(
   if(length(qte_cohort) == 0) stop("Not enough cohorts / groups in the data set!")
   
   # Print settings
-  if (print_details == TRUE & is.null(boot)) {
-    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, 
+  if (is.null(boot)) {
+    message(paste0("Estimating a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, 
                    " groups and ", nrow(dat), " observations. No standard errors computed."))
-  } else if (print_details == TRUE & !is.null(boot)) {
-    message(paste0("Started a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, 
+  } else {
+    message(paste0("Estimating a changes-in-changes model for ", length(unique(dat[[gvar]])) - 1, 
                    " groups and ", nrow(dat), " observations with ", nReps, " (", boot, ") bootstrap replications."))
   }
   
@@ -460,7 +454,7 @@ ecic = function(
     # update progress bar
     p() 
 
-    # save to disk (saver, but maybe slower
+    # save to disk (saver, but slower)
     if (save_to_temp == TRUE) {
       tmp_quant = tempfile(paste0(pattern = "myQuant_", random_num, "_", j, "_"), fileext = ".rds")
       tmp_name  = tempfile(paste0(pattern = "name_runs_", random_num, "_", j, "_"), fileext = ".rds")
@@ -468,15 +462,11 @@ ecic = function(
       saveRDS(myQuant, file = tmp_quant)
       saveRDS(name_runs, file = tmp_name)
       return(j)
-    }
-
-    # just work in the RAM (output lost if crash and RAM may be too small)
-    if (short_output == TRUE & save_to_temp == FALSE) {
+      
+    } else { # just work in the RAM (output lost if crash and RAM may be too small)
       return(list(coefs = myQuant, name_runs = name_runs))
     } 
-    if ((short_output == FALSE & save_to_temp == FALSE)) {
-      return(list(coefs = myQuant, n1 = n1, n0 = n0, name_runs = name_runs, y1 = y1, y0 = y0))
-    }
+    
     },
   .options = furrr::furrr_options(seed = 123)
     )
