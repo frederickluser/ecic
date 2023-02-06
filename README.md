@@ -184,3 +184,7 @@ Technically, `ecic` generates a grid over the dependent variable and imputes all
 ### Bootstrap
 I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 1`).
 This part can be parallelized by setting `nCores > 1`.
+
+## Next Steps
+- [ ] Add covariates
+- [ ] Allow saving to temporary files in parallel
