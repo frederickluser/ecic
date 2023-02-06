@@ -95,7 +95,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p><code>ecic</code>is available on <a href="https://CRAN.R-project.org/package=ecic" class="external-link">CRAN</a> using:</p>
+<p><code>ecic</code> is available on <a href="https://CRAN.R-project.org/package=ecic" class="external-link">CRAN</a> using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ecic"</span><span class="op">)</span></span></code></pre></div>
 <p>You can install the newest version from <a href="https://github.com/frederickluser/ecic" class="external-link">GitHub</a>:</p>
@@ -233,6 +233,14 @@
 </div>
 </div>
 <div class="section level2">
+<h2 id="next-steps">Next Steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
+</h2>
+<ul class="task-list">
+<li>
+<input type="checkbox" disabled>Add covariates</li>
+</ul>
+</div>
+<div class="section level2">
 <h2 id="under-the-hood">Under the hood<a class="anchor" aria-label="anchor" href="#under-the-hood"></a>
 </h2>
 <div class="section level3">
@@ -251,16 +259,6 @@
 </h3>
 <p>I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span> <code>nRep</code> times (default <code>nReps = 1</code>). This part can be parallelized by setting <code>nCores &gt; 1</code>.</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="next-steps">Next Steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
-</h2>
-<ul class="task-list">
-<li>
-<input type="checkbox" disabled>Add covariates</li>
-<li>
-<input type="checkbox" disabled>Allow saving to temporary files in parallel</li>
-</ul>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
