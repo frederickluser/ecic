@@ -242,6 +242,7 @@ ecic = function(
   
   ################################################################################
   # Calculate all 2-by-2 CIC combinations
+  if (nCores > 1) warning("Started loading the workers for parallel computation.")
   
   future::plan(future::multisession, workers = nCores, gc = TRUE)
   progressr::handlers(progress_bar) # choose whether to print output
