@@ -204,8 +204,8 @@ ecic = function(
   dat[[gvar]]  = dat[[gvar]]-(first_period-1) 
   
   # calculate group / cohort sizes
-  group_sizes = stats::aggregate(stats::as.formula(paste(". ~ ", gvar)), 
-                                 data = dat[!duplicated(dat[, ivar]), ], FUN = length)[c(gvar, yvar)]
+  group_sizes = stats::aggregate(stats::as.formula(paste(yvar, " ~ ", gvar)), 
+                                 data = dat[!duplicated(dat[, ivar]), ], FUN = length)
   names(group_sizes)[names(group_sizes) == yvar] = "N"
   
   # check number of too small groups / cohorts and exclude them
