@@ -260,8 +260,8 @@ ecic = function(
     # resampling for bootstrapping
       if (!is.null(boot)) {
         if (boot == "weighted") {
-          cell_sizes = stats::aggregate(stats::as.formula(paste(". ~ ", gvar, "+", tvar)), 
-                                        data = dat, FUN = length)[c(gvar, tvar, yvar)] # count cohort-period cells
+          cell_sizes = stats::aggregate(stats::as.formula(paste(yvar, " ~ ", gvar, "+", tvar)), 
+                                        data = dat, FUN = length) # count cohort-period cells
           names(cell_sizes)[names(cell_sizes) == yvar] = "N"
           dat = merge(dat, cell_sizes, all.x = TRUE)
           data_boot = dat[sample(1:nrow(dat), size = nrow(dat), replace = TRUE, prob = dat$N), ]
