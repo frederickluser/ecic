@@ -1,18 +1,22 @@
-## version 0.0.2
+## version 0.0.3
 
----
+### New Features
+- Added progress bars to the bootstrap procedure with the `progress_bar` option.
+- writing the bootstrap results to temporary files with `save_to_temp` is now also possible in parallel computing.
+- Computation can now be sped up by rounding the dependent variable before imputation. This reduces precision but leads to gains in running time.
+### Bug Fixes
+- bugs in processing the inputs in `ecic_plot` fixed.
+- Bugs in resampling for the weighted bootstrap fixed.
+- Various additional input-checks added.
+
+## version 0.0.2
 
 
 ### Resubmission to CRAN
 
 - Minor changes for CRAN.
 
+## version 0.0.1
 
-## version 0.0.0.9000
-
----
-
-### NEWS.md setup
-
-- added NEWS.md creation with newsmd
+### First Submission to CRAN.
 
