@@ -242,8 +242,7 @@ ecic = function(
   
   ################################################################################
   # Calculate all 2-by-2 CIC combinations
-  if (nCores > 1) warning("Started loading the workers for parallel computation.")
-  
+
   future::plan(future::multisession, workers = nCores, gc = TRUE)
   progressr::handlers(progress_bar) # choose whether to print output
   
@@ -259,13 +258,14 @@ ecic = function(
 
     # resampling for bootstrapping
       if (!is.null(boot)) {
+        print("weighting started")
         if (boot == "weighted") {
           cell_sizes = stats::aggregate(stats::as.formula(paste(yvar, " ~ ", gvar, "+", tvar)), 
                                         data = dat, FUN = length) # count cohort-period cells
           names(cell_sizes)[names(cell_sizes) == yvar] = "N"
           dat = merge(dat, cell_sizes, all.x = TRUE)
           data_boot = dat[sample(1:nrow(dat), size = nrow(dat), replace = TRUE, prob = dat$N), ]
-          
+          print("weighting completed")
         } else if (boot == "normal") {
           data_boot = dat[sample(1:nrow(dat), size = nrow(dat), replace = TRUE), ]
         }
