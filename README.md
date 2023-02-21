@@ -8,12 +8,12 @@
 [![Dependencies](https://tinyverse.netlify.com/badge/ecic)](https://CRAN.R-project.org/package=ecic)
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
-cohorts as suggested in Athey and Imbens ([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x)).
+cohorts as suggested in Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
 Changes-in-changes is a generalization of the difference-in-differences approach, estimating
 a treatment effect for the entire distribution instead of averages.
 
 Athey and Imbens
-([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x))
+([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models))
 show how to extend the model to multiple periods and cohorts, analogously to a two-way fixed-effects model for averages.
 This package implements this, 
 calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.
@@ -170,7 +170,7 @@ ecic_plot(
 ## Under the hood
 ### Estimation
 For every treated cohort, we observe the distribution of the potential outcome $Y(1)$. 
-In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x))
+In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models))
 show how to construct the counterfactual $Y(0)$.
 This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group. Hence, every combination of treated and not-yet-treated cohorts with a common pre-treatment period estimates in theory the quantile treatment effect. Then, I simply want to average them.
 
@@ -183,7 +183,7 @@ Technically, `ecic` generates a grid over the dependent variable and imputes all
 
 ### Bootstrap
 I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 1`). Bootstrap can either be computed through replacement over the entire dataset (with `boot = "normal"`) or you can weight by cohort sizes (with `boot = "weighted"`) if you worry, for example, about small cohorts.
-This part can be parallelized by setting `nCores > 1`, speedinging up the computation at the cost of additional overhead to load the cores.
+This part can be parallelized by setting `nCores > 1`, speeding up the computation at the cost of additional overhead to load the cores.
 
 `progress_bar` prints the progress of the bootstrapping by default. Alternatively, the option `progress_bar = "cli"` also shows estimated running time, but requires the `cli` package to be installed.
 
