@@ -8,13 +8,13 @@
 [![Dependencies](https://tinyverse.netlify.com/badge/ecic)](https://CRAN.R-project.org/package=ecic)
 
 `ecic` estimates a changes-in-changes model with multiple periods and 
-cohorts as suggested in Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models)).
+cohorts as suggested in Athey and Imbens ([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x)).
 Changes-in-changes is a generalization of the difference-in-differences approach, estimating
 a treatment effect for the entire distribution instead of averages.
 
 Athey and Imbens
-([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models))
-show how to extend the model to multiple periods and cohorts, analogously to a Two-Way Fixed-Effects model for averages.
+([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x))
+show how to extend the model to multiple periods and cohorts, analogously to a two-way fixed-effects model for averages.
 This package implements this, 
 calculating standard errors via bootstrap and plotting results, aggregated or in an event-study-style fashion.
 
@@ -66,8 +66,7 @@ mod =
     nReps = 10            # number of bootstrap runs
     )
 ```
-`mod`contains for every bootstrap run a list of all 2-by-2 combinations (`$name_runs`) and the point-estimates (`$coefs`).
-`summary` then combines all bootstrap runs to a quantile treatment effect and adds standard errors:
+The input `gvar` denotes the period in which this individual receives the treatment. `mod` contains for every bootstrap run the point-estimates. The function `summary` then combines all bootstrap runs to a quantile treatment effect and adds standard errors:
 
 ``` r
 mod_res = summary(mod) 
@@ -141,7 +140,7 @@ mod_res = summary(mod)
 #> [...]
 ```
 ### Plotting
-Event-study results can be plotted for every period individually with the option `es_type = "for_periods"`.
+In addition to a standard plot showing everything at once, event-study results can be plotted for every period individually with the option `es_type = "for_periods"`.
 ``` r
 ecic_plot(
     mod_res, 
@@ -168,22 +167,25 @@ ecic_plot(
  <img src="man/figures/plot_es_decile.png" width="100%" style="display: block; margin: auto;" />
 </p>
 
-## Next Steps
-- [ ] Add covariates
-
 ## Under the hood
 ### Estimation
 For every treated cohort, we observe the distribution of the potential outcome $Y(1)$. 
-In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models))
+In the case of two groups / cohorts and two periods, Athey and Imbens ([2006](https://doi.org/10.1111/j.1468-0262.2006.00668.x))
 show how to construct the counterfactual $Y(0)$.
-This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group.
+This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group. Hence, every combination of treated and not-yet-treated cohorts with a common pre-treatment period estimates in theory the quantile treatment effect. Then, I simply want to average them.
 
-Since we cannot simply average Quantile Treatment Effects, we must first store the empirical CDF of $Y(1)$ and $Y(0)$ for every two-by-two case. Note that, therefore, we cannot estimate a quantile treatment effect for units treated in the first (no pre-treatment period) and last period (no comparison cohort) and have to skip small cohorts (default `nMin = 40`) as we need more observations to estimate quantile treatment effects compared to an average effect.
+Yet, since it is not allowed to simply average quantile treatment effects, we must first store the empirical CDF of $Y(1)$ and $Y(0)$ for every two-by-two case. Next, I aggregate all estimated CDFs to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes. Finally, I invert them to get the quantile function and compute the quantile treatment effect as in the standard case.
 
-### Aggregation
-Next, I aggregate all estimated CDFs to get the plug-in estimates of $Y(1)$ and $Y(0)$, weighting for the cohort sizes.
-Technically, `ecic` generates a grid over the dependent variable and imputes all empirical CDFs. You can speed up the imputation by rounding the dependent variable to `n_digits`.
+Note that it is impossible to estimate a quantile treatment effect for units treated in the first (no pre-treatment period) and last period (no comparison cohort). In addition, the default value of `nMin` skips small cohorts (default `nMin = 40`) as we need more observations to estimate quantile treatment effects compared to an average effect.
+
+### Speed Improvements
+Technically, `ecic` generates a grid over the dependent variable and imputes all empirical CDFs for every unique value of `yvar`. You can (cautiously) speed up the imputation by rounding the dependent variable to `n_digits`.
 
 ### Bootstrap
-I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 1`).
-This part can be parallelized by setting `nCores > 1`.
+I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate $Y(1)$ and $Y(0)$ `nRep` times (default `nReps = 1`). Bootstrap can either be computed through replacement over the entire dataset (with `boot = "normal"`) or you can weight by cohort sizes (with `boot = "weighted"`) if you worry, for example, about small cohorts.
+This part can be parallelized by setting `nCores > 1`, speedinging up the computation at the cost of additional overhead to load the cores.
+
+`progress_bar` prints the progress of the bootstrapping by default. Alternatively, the option `progress_bar = "cli"` also shows estimated running time, but requires the `cli` package to be installed.
+
+### Next Steps for the package
+- [ ] Add covariates
