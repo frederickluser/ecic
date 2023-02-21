@@ -4,12 +4,15 @@
 \alias{print.ecic}
 \title{Print ecic objects}
 \usage{
-\method{print}{ecic}(x, ...)
+\method{print}{ecic}(x, ..., details = FALSE)
 }
 \arguments{
 \item{x}{An \code{ecic} object.}
 
 \item{...}{further arguments}
+
+\item{details}{logical. Set to TRUE to print background information for
+every bootstrap run and Changes-in-Changes model.}
 }
 \value{
 An \code{ecic} print object.

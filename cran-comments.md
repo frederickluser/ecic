@@ -1,33 +1,25 @@
 ## RESUBMISSION
 
-I thank Benjamin Altmann for his great comments. I tackled them as follows.
-
-* I obmitted "functions for" in the DESCRIPTION.
-
-* I replaced T / F with TRUE / FALSE everywhere.
-
-* I added a toy example without donttest that runs in under 5 seconds.
-
-* I replaced all print() calls with messages. They won't be shown now by default.
-
-* In addition, I reran the checks listed below. Their results were identical as in the first submission.
+This is the first resubmission of the package ecic, including mainly bug fixes.
 
 ## R CMD check results
 
 There were no ERRORs or WARNINGs. 
 
-There was 1 NOTE:
+There was 1 NOTE (but the URLs mentioned in the note work):
 
-* checking CRAN incoming feasibility ... NOTE
-   Maintainer: 'Frederic Kluser <frederic.kluser@unibe.ch>'
-   
-   New submission
-   
-   Found the following (possibly) invalid DOIs:
-     DOI: 10.1111/j.1468-0262.2006.00668.x
-       From: DESCRIPTION
-       Status: Service Unavailable
-       Message: 503
+*  Found the following (possibly) invalid URLs:
+    URL: https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models
+      From: README.md
+      Status: 504
+      Message: Gateway Timeout
+  
+*  Found the following (possibly) invalid DOIs:
+    DOI: 10.1111/j.1468-0262.2006.00668.x
+      From: DESCRIPTION
+      Status: Service Unavailable
+      Message: 503
+
 
 ## check on other distributions: Windows Server 2022, R-devel, 64-bit and Winbuilder
 
