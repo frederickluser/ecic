@@ -1,5 +1,8 @@
 # ecic 0.0.4
 
+## version 0.0.4
+- Minor changes and bug fixes for CRAN.
+
 ## version 0.0.3
 
 ### New Features
