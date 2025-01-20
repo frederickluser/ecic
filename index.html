@@ -5,81 +5,45 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Extends the Changes-in-Changes model a la Athey and Imbens
-    (2006) &lt;doi:10.1111/j.1468-0262.2006.00668.x&gt; to multiple cohorts and
-    time periods, which generalizes difference-in-differences estimation
-    techniques to the entire distribution. Computes quantile treatment
-    effects for every possible two-by-two combination in ecic(). Then,
-    aggregating all bootstrap runs adds the standard errors in
-    summary_ecic(). Results can be plotted with plot_ecic() aggregated
-    over all cohort-group combinations or in an event-study style for
-    either individual periods or individual quantiles.">
 <title>Extended Changes-in-Changes • ecic</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="apple-touch-icon-60x60.png">
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Extended Changes-in-Changes">
-<meta property="og:description" content="Extends the Changes-in-Changes model a la Athey and Imbens
-    (2006) &lt;doi:10.1111/j.1468-0262.2006.00668.x&gt; to multiple cohorts and
-    time periods, which generalizes difference-in-differences estimation
-    techniques to the entire distribution. Computes quantile treatment
-    effects for every possible two-by-two combination in ecic(). Then,
-    aggregating all bootstrap runs adds the standard errors in
-    summary_ecic(). Results can be plotted with plot_ecic() aggregated
-    over all cohort-group combinations or in an event-study style for
-    either individual periods or individual quantiles.">
+<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Extended Changes-in-Changes">
+<meta name="description" content="Extends the Changes-in-Changes model a la Athey and Imbens (2006) &lt;doi:10.1111/j.1468-0262.2006.00668.x&gt; to multiple cohorts and time periods, which generalizes difference-in-differences estimation techniques to the entire distribution. Computes quantile treatment effects for every possible two-by-two combination in ecic(). Then, aggregating all bootstrap runs adds the standard errors in summary_ecic(). Results can be plotted with plot_ecic() aggregated over all cohort-group combinations or in an event-study style for either individual periods or individual quantiles.">
+<meta property="og:description" content="Extends the Changes-in-Changes model a la Athey and Imbens (2006) &lt;doi:10.1111/j.1468-0262.2006.00668.x&gt; to multiple cohorts and time periods, which generalizes difference-in-differences estimation techniques to the entire distribution. Computes quantile treatment effects for every possible two-by-two combination in ecic(). Then, aggregating all bootstrap runs adds the standard errors in summary_ecic(). Results can be plotted with plot_ecic() aggregated over all cohort-group combinations or in an event-study style for either individual periods or individual quantiles.">
 <meta property="og:image" content="https://frederickluser.github.io/ecic/logo.png">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="index.html">ecic</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.4</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="reference/index.html">Reference</a>
-</li>
-<li class="nav-item">
-  <a class="nav-link" href="news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/frederickluser/ecic/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/frederickluser/ecic/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-home">
 <div class="row">
@@ -238,8 +202,8 @@
 <div class="section level3">
 <h3 id="estimation-1">Estimation<a class="anchor" aria-label="anchor" href="#estimation-1"></a>
 </h3>
-<p>For every treated cohort, we observe the distribution of the potential outcome <span class="math inline"><em>Y</em>(1)</span>. In the case of two groups / cohorts and two periods, Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>) show how to construct the counterfactual <span class="math inline"><em>Y</em>(0)</span>. This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group. Hence, every combination of treated and not-yet-treated cohorts with a common pre-treatment period estimates in theory the quantile treatment effect. Then, I simply want to average them.</p>
-<p>Yet, since it is not allowed to simply average quantile treatment effects, we must first store the empirical CDF of <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span> for every two-by-two case. Next, I aggregate all estimated CDFs to get the plug-in estimates of <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span>, weighting for the cohort sizes. Finally, I invert them to get the quantile function and compute the quantile treatment effect as in the standard case.</p>
+<p>For every treated cohort, we observe the distribution of the potential outcome <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(1)</annotation></semantics></math>. In the case of two groups / cohorts and two periods, Athey and Imbens (<a href="https://scholar.harvard.edu/imbens/publications/identification-and-inference-nonlinear-difference-differences-models" class="external-link">2006</a>) show how to construct the counterfactual <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(0)</annotation></semantics></math>. This extends to the case with multiple cohorts and periods, where every not-yet-treated cohort is a valid comparison group. Hence, every combination of treated and not-yet-treated cohorts with a common pre-treatment period estimates in theory the quantile treatment effect. Then, I simply want to average them.</p>
+<p>Yet, since it is not allowed to simply average quantile treatment effects, we must first store the empirical CDF of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(1)</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(0)</annotation></semantics></math> for every two-by-two case. Next, I aggregate all estimated CDFs to get the plug-in estimates of <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(1)</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(0)</annotation></semantics></math>, weighting for the cohort sizes. Finally, I invert them to get the quantile function and compute the quantile treatment effect as in the standard case.</p>
 <p>Note that it is impossible to estimate a quantile treatment effect for units treated in the first (no pre-treatment period) and last period (no comparison cohort). In addition, the default value of <code>nMin</code> skips small cohorts (default <code>nMin = 40</code>) as we need more observations to estimate quantile treatment effects compared to an average effect.</p>
 </div>
 <div class="section level3">
@@ -250,15 +214,14 @@
 <div class="section level3">
 <h3 id="bootstrap">Bootstrap<a class="anchor" aria-label="anchor" href="#bootstrap"></a>
 </h3>
-<p>I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate <span class="math inline"><em>Y</em>(1)</span> and <span class="math inline"><em>Y</em>(0)</span> <code>nRep</code> times (default <code>nReps = 1</code>). Bootstrap can either be computed through replacement over the entire dataset (with <code>boot = "normal"</code>) or you can weight by cohort sizes (with <code>boot = "weighted"</code>) if you worry, for example, about small cohorts. This part can be parallelized by setting <code>nCores &gt; 1</code>, speeding up the computation at the cost of additional overhead to load the cores.</p>
+<p>I calculate standard errors by bootstrap. I resample with replacement the entire dataset and estimate <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(1)</annotation></semantics></math> and <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Y</mi><mrow><mo stretchy="true" form="prefix">(</mo><mn>0</mn><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">Y(0)</annotation></semantics></math><code>nRep</code> times (default <code>nReps = 1</code>). Bootstrap can either be computed through replacement over the entire dataset (with <code>boot = "normal"</code>) or you can weight by cohort sizes (with <code>boot = "weighted"</code>) if you worry, for example, about small cohorts. This part can be parallelized by setting <code>nCores &gt; 1</code>, speeding up the computation at the cost of additional overhead to load the cores.</p>
 <p><code>progress_bar</code> prints the progress of the bootstrapping by default. Alternatively, the option <code>progress_bar = "cli"</code> also shows estimated running time, but requires the <code>cli</code> package to be installed.</p>
 </div>
 <div class="section level3">
 <h3 id="next-steps-for-the-package">Next Steps for the package<a class="anchor" aria-label="anchor" href="#next-steps-for-the-package"></a>
 </h3>
 <ul class="task-list">
-<li>
-<input type="checkbox" disabled>Add covariates</li>
+<li><label><input type="checkbox">Add covariates</label></li>
 </ul>
 </div>
 </div>
@@ -303,21 +266,19 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p></p>
-<p>Developed by Frederic Kluser.</p>
+  <p>Developed by Frederic Kluser.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
