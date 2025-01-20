@@ -195,7 +195,8 @@ ecic = function(
   #-----------------------------------------------------------------------------
   # Prepare the data
   dat = subset(dat, get(gvar) %in% unique(dat[[tvar]])) # exclude never-treated units
-
+  dat = dat[,c(yvar, gvar, tvar, ivar)] # keep relevant vars (lower RAM in parallel)
+  
   # star tvar and gvar at zero
   first_period = min(dat[[tvar]], na.rm = TRUE)
   last_cohort  = max(dat[[gvar]], na.rm = TRUE) - first_period
@@ -257,7 +258,7 @@ ecic = function(
     y1 = y0 = name_runs = vector("list")
 
     # resampling for bootstrapping
-      if (!is.null(boot)) {
+      if ( !is.null(boot) ) {
         if (boot == "weighted") {
           cell_sizes = stats::aggregate(stats::as.formula(paste(yvar, " ~ ", gvar, "+", tvar)), 
                                         data = dat, FUN = length) # count cohort-period cells
@@ -279,6 +280,7 @@ ecic = function(
 
       # 2) comparison groups ----
       pre_cohort = list_cohorts[(which(list_cohorts == qteCohort)+1):length(list_cohorts)]
+      #pre_cohort = pre_cohort[pre_cohort - qteCohort >= 4]
       
       for (preCohort in pre_cohort) {
       
